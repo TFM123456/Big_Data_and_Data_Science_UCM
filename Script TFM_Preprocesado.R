@@ -1,3 +1,4 @@
+#Hola guapetones
 # PREPROCESADO TFM
 
 # Fijamos un directorio de trabajo:
