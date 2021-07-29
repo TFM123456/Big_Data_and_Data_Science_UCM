@@ -228,6 +228,7 @@ dataset$causa_supuesta <- replace(dataset$causa_supuesta , which(is.na(dataset$c
 # Transformar las 2 de time a horas ALEJANDRA
 # Tramificar personal y gastos ¿?
 # Ver si se pueden sacar 4 categorías de la dirección del viento  ALEX
+# Cambiar formato latitud y longitud
 
 # COSAS PENDIENTES
 
