@@ -2,8 +2,7 @@
 # PREPROCESADO TFM
 
 # Fijamos un directorio de trabajo:
-
-setwd("C:/Users/Alicia López Machado/Desktop/Máster Big Data & Data Science/TFM")
+load(url(https://github.com/TFM123456/Big_Data_and_Data_Science_UCM/blob/main/Galicia_definitivo.csv))
 
 
 # Leemos los dos dataset
