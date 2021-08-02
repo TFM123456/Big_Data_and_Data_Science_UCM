@@ -12,6 +12,13 @@ datos <- read.csv("DATASET TFM_v2_12072021.csv")
 
 #ÀstringsAsFactors=F, na.strings=c(NA,"NA"," NA")
 
+
+######### (Lena) Leer el dataset directamente de GitHub
+
+# library (readr) - librería para leer datos
+# url = "https://raw.githubusercontent.com/TFM123456/Big_Data_and_Data_Science_UCM/main/Galicia_definitivo.csv?token=APWX757FFLSZSWKCBLBC6SLBBAUWQ"
+# datos_galicia = as.data.frame(read.csv(url(url)))
+
 datos_galicia <- read.csv("Galicia_definitivo.csv")
 
 
@@ -29,6 +36,7 @@ library(tidyverse) # for data transformation
 library(ggplot2) # to plot beutiful grapt
 library(lubridate) # to handle dates in elegant way
 library(mice) # to check missing data
+library (readr) # librería para leer datos
 
 
 #library(leaflet)
