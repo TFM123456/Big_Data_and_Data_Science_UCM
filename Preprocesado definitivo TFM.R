@@ -582,14 +582,14 @@ datos_galicia$DIR<-replace(datos_galicia$DIR, which((datos_galicia$DIR < 0)|(dat
 
 
 
-datos_galicia[,"viento"] <- cut(datos_galicia$DIR,breaks = c(0,4.5,9,13.5,18,22.5,27,31.5,36),
-                                labels = c("A","B","C","D","E","F","G","H") ) 
-table(datos_galicia$viento)
+#datos_galicia[,"viento"] <- cut(datos_galicia$DIR,breaks = c(0,4.5,9,13.5,18,22.5,27,31.5,36),
+                                #labels = c("A","B","C","D","E","F","G","H") ) 
+
 
                         
                         
-#datos_galicia[,"viento"] <- cut(datos_galicia$DIR,breaks = c(0, 2.25, 6.75, 11.25, 15.75, 20.25, 24.75, 29.25, 33.75, 36),
-                                #labels = c("N","NE","E","SE","S","SW","W","NW","N") ) 
+datos_galicia[,"viento"] <- cut(datos_galicia$DIR,breaks = c(0, 2.25, 6.75, 11.25, 15.75, 20.25, 24.75, 29.25, 33.75, 36),
+                                labels = c("N","NE","E","SE","S","SW","W","NW","N") ) 
 
 #Se realizan rupturas de 4.5º por cada dirección.
 #0,36 = N -> Por tanto el Norte comprende entre 33.25 y 2.25
@@ -600,7 +600,8 @@ table(datos_galicia$viento)
 #22,5 = SW -> (20.25 - 24.75)
 #27 = W -> (24.75 - 29.25)
 #31,5 = NW -> (29.25 - 33.75)
-                        
+                                
+table(datos_galicia$viento)                       
                         
                         
 # V DE CRAMER
