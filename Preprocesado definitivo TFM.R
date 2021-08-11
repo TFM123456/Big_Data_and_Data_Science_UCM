@@ -40,9 +40,13 @@ datos_galicia <- read.csv("Galicia_definitivo.csv")
 ######### (Lena) Leer el dataset directamente de GitHub -- porfi podéis poner aquí el código que funcionaba?
 
 library (readr) # librería para leer datos
-url = "https://raw.githubusercontent.com/TFM123456/Big_Data_and_Data_Science_UCM/main/Galicia_definitivo.csv?token=APWX757FFLSZSWKCBLBC6SLBBAUWQ"
-url2 = "https://github.com/TFM123456/Big_Data_and_Data_Science_UCM/blob/main/Galicia_definitivo.csv"
+url = "https://raw.githubusercontent.com/TFM123456/Datos/main/Galicia_definitivo.csv"  # URL actualizada 12/08/2021- debería funcionar para todos
+# url2 = "https://github.com/TFM123456/Big_Data_and_Data_Science_UCM/blob/main/Galicia_definitivo.csv"
 datos_galicia = as.data.frame(read.csv(url(url)))
+
+
+url1 = "https://raw.githubusercontent.com/TFM123456/Datos/main/DATASET%20TFM_v2_12072021.csv"  # URL actualizada 12/08/2021- debería funcionar para todos
+datos = as.data.frame(read.csv(url(url1)))
 
 
 
