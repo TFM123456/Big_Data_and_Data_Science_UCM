@@ -1,0 +1,260 @@
+
+#cargamos librerias 
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model.logistic import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestClassifier
+from sklearn import naive_bayes
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2 
+from sklearn.feature_selection import VarianceThreshold
+from sklearn.metrics import accuracy_score, auc, confusion_matrix, f1_score, precision_score, recall_score, roc_curve
+from sklearn.model_selection import cross_val_score
+from sklearn.tree import plot_tree
+from sklearn.tree import export_graphviz
+from sklearn.tree import export_text
+from sklearn.metrics import mean_squared_error
+from pandas.plotting import scatter_matrix
+from datetime import datetime,timedelta
+from sklearn.feature_selection import SelectFromModel
+from sklearn.linear_model import LinearRegression
+
+datos_galicia = pd.read_csv('datos_galicia.csv', sep='|')
+
+datos_galicia.head()
+
+#vemos finalmente que columnas tiene nuestro dataset
+datos_galicia.columns
+
+#Comprobamos que sean correctos los tipos de datos 
+datos_galicia.dtypes
+
+
+#En primer lugar, creamos nuestra variable objetivo: las pérdidas de los incendios
+datos_galicia['target']==datos_galicia['perdidas']
+.....hacer tambien target causa
+
+
+#variables categóricas/numéricas
+lista_categoricas=['','',]
+lista_numericas=['','',]
+
+#Vamos a ver como se distribuyen los valores en las variables categoricas
+for i in lista_categoricas:
+    print(cosecha_diciembre[i].value_counts())
+
+
+#Transformamos las variables categóricas -> codificación one-hot
+#Este método consiste en crear una nueva variable binaria por cada categoria existente en la variable inicial, donde 
+#1 serán las observaciones que pertenezcan a esa categoría y 0 las demás.
+
+dummies= pd.get_dummies(datos_galicia['idprovincia'], drop_first = True)
+dummies.head()
+
+datos_galicia = pd.concat([datos_galicia, dummies], axis = 1)
+
+
+dummies2= pd.get_dummies(datos_galicia['causa'], drop_first = True)
+dummies2.head()
+datos_galicia = pd.concat([datos_galicia, dummies2], axis = 1)
+
+
+
+dummies3= pd.get_dummies(datos_galicia['DIR'], drop_first = True)
+dummies3.head()
+datos_galicia = pd.concat([datos_galicia, dummies3], axis = 1)
+
+
+#Ahora eliminamos las variables originales
+datos_galicia = datos_galicia.drop(columns=['idprovincia'])
+datos_galicia = datos_galicia.drop(columns=['causa'])
+datos_galicia = datos_galicia.drop(columns=['DIR'])
+
+datos_galicia.columns()
+
+# --- Modelado
+
+
+#Dividimos los datos en Train y Test y separamos ambas entre x -> entradas ( variables explicativas) e y-> salidas ( variable objetivo)
+#Nuestro conjunto de Train es el entrenamiento, en Test probaremos los resultados de nuestras predicciones.
+
+
+
+X_train, X_test, y_train, y_test = train_test_split(
+                                        datos_galicia.drop('target', axis = 'columns'),
+                                        datos_galicia['target'],
+                                        train_size   = 0.8,
+                                        random_state = 1234,
+                                        shuffle      = True)
+
+#Comprobamos
+X_train.shape
+y_train.shape
+X_test.shape
+y_test.shape
+
+#Generamos una funcion que nos dirá los resultados de cada modelo que generemos
+def saca_metricas(y1, y2):
+    print('matriz de confusión')
+    print(confusion_matrix(y1, y2))
+    print('accuracy')
+    print(accuracy_score(y1, y2))
+    print('precision')
+    print(precision_score(y1, y2))
+    print('recall')
+    print(recall_score(y1, y2))
+    print('f1')
+    print(f1_score(y1, y2))
+    false_positive_rate, recall, thresholds = roc_curve(y1, y2)
+    roc_auc = auc(false_positive_rate, recall)
+    print('AUC')
+    print(roc_auc)
+    plt.plot(false_positive_rate, recall, 'b')
+    plt.plot([0, 1], [0, 1], 'r--')
+    plt.title('AUC = %0.2f' % roc_auc)
+
+
+#Primero vamos a generar varios tipos de modelos con todas las variables para ver cuál puede ser el modelo que más se ajuste a nuestros datos
+
+
+#--regresion lineal múltiple
+target = 'target'
+features = list(datos_galicia.columns)
+features.remove('target')
+
+x = datos_galicia[features]
+y = datos_galicia[target]
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+print ('R2 en entrenamiento es: ', model.score(X_train, y_train))
+print ('R2 en validación es: ', model.score(X_test, y_test))
+
+
+
+
+#-- arbol de decisión
+modelo_arbol = DecisionTreeClassifier(criterion='entropy',
+                                      random_state = 123,
+                                    class_weight={1:12.5}).fit(X_train, y_train)
+y_pred        = modelo_arbol.predict(X_test)
+modelo_arbol_resultados = saca_metricas(y_test, y_pred)
+
+
+# -- random forest
+#conjuntos de arboles de decisión
+modelo_randfor = RandomForestClassifier().fit(X_train, y_train)
+y_pred        = modelo_randfor.predict(X_test)
+
+saca_metricas(y_test, y_pred)
+
+#--naive bayes
+#Obtiene la probabilidad considerando las variables predictoras independientes, como si actuasen cada una de manera individual frente a la variable objetivo
+modelo_bayes = naive_bayes.GaussianNB().fit(X_train, y_train)
+y_pred        = modelo_bayes.predict(X_test)
+
+saca_metricas(y_test, y_pred)
+
+
+
+#Mejora del modelo -> Selección de variables. 
+#Modelo seleccionado
+#Eliminación hacia atrás -> Backward
+
+#Eliminamos variables con poca correlación con la variable objetivo:
+corr = abs(datos_galicia.corr())
+corr[['target']].sort_values(by = 'target',ascending = False).style.background_gradient()
+#Creamos un dataset sin esas variables
+datos_galicia1= datos_galicia.drop(['',''],axis=1)
+#Hacemos el modelo con este dataset
+
+
+#Eliminamos variables muy correlacionadas
+correlation_mat = datos_galicia.corr()
+
+sns.heatmap(correlation_mat, annot = True)
+
+plt.show()
+
+
+#Acercamos las que parece que tienen mayor correlacion ( lo mismo no hace falta si se ve bien con el codigo anterior)
+relaciones= datos_galicia[[']]
+
+correlation_mat = relaciones.corr()
+
+sns.heatmap(correlation_mat, annot = True)
+
+plt.show()
+
+#Creo dataset sin ellas
+datos_galicia2 = datos_galicia1.drop(['',...,axis=1)
+#modelo
+
+
+#Seleccionamos las 10 mejores variables
+
+S_chi5 = SelectKBest(chi2, k = 10)
+X_chi5 = S_chi5.fit_transform(datos_galicia, datos_galicia['target'])
+
+variables = list(np.asarray(list(datos_galicia))[S_chi5.get_support()])
+variables.sort()
+print(variables)
+
+#hacemos dataset con las 10 mejores
+datos_galicia3 = datos_galicia[['','',...]]
+#modelo
+
+
+#Variables con mayor peso dentro de las 10 mejores variables--> mirar bien esto
+modelo_peso = SelectFromModel(estimator=DecisionTreeClassifier(criterion='entropy',
+                                    class_weight={1:12.5})).fit(X_train, y_train)
+
+modelo_peso.get_support()
+select_features = X_train.columns[(modelo_peso.get_support())]
+modelo_peso = DecisionTreeClassifier().fit(X_train, y_train)
+
+y_pred     = modelo_peso.predict(X_test)
+
+modelo_peso_resultados = saca_metricas(y_test, y_pred)
+
+#importancias
+modelo_peso.feature_importances_
+datos_galicia3.columns
+#Creamos dataset con esas columnas con mayor importancia
+datos_galicia4 = datos_galicia3[['','',...]]
+#modelo
+
+
+#Selección del mejor modelo
+#si es finalmente arbol de decision: mirar el overfitting
+
+#--Validacion cruzada
+
+#--Visualizacion y explicación del modelo
+
+#--Importancia de los predictores
+importancia_predictores = pd.DataFrame(
+                            {'predictor': datos_galicia???.drop(columns = "target").columns,
+                             'importancia': modelo???.feature_importances_}
+                            )
+print("Importancia de los predictores en el modelo")
+print("-------------------------------------------")
+importancia_predictores.sort_values('importancia', ascending=False)
+
+
+#-- Predicción
+
+
+
+
+
+
+
+
