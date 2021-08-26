@@ -1,0 +1,1125 @@
+---
+title: "Preprocesado Trabajo Fin de de Máster"
+date: "15/09/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#knitr::opts_chunk$set(duplicate.label = 'allow') buscar opcion para esto
+```
+
+
+En este script vamos a realizar el preprocesado del dataset en el que hemos basado nuestro trabajo.
+Este dataset reúne un conjunto de datos de Galicia y se ha construido a partir de dos dataset diferentes.
+El primero de ellos reflejaba información sobre -- acabar
+
+
+## ÍNDICE
+
+
+
+### ESTRUCTURA:
+
+1. IMPORTACIÓN DE LIBRERÍAS
+
+2. CREACIÓN DE DIRECTORIO DE TRABAJO E IMPORTACIÓN DE LOS DATOS 
+
+3. DESCRIPCIÓN GENERAL DEL DATASET : INSPECCIÓN ANALÍTICA Y VISUAL
+
+4. ESTUDIO Y TRATAMIENTO DE OUTLIERS
+
+5. ESTUDIO Y TRATAMIENTO DE VALORES PERDIDOS
+
+6. ACCIONES NO REALIZADAS / REFLEXIONES
+
+
+
+
+### 1. IMPORTACIÓN DE LIBRERÍAS
+
+
+Vamos a importar las librerías que utilizaremos para la limpieza y el tratamiento de los datos y añadimos una nota breve para utilidad / iinalidad de cada una.
+
+
+
+```{r libraries, warning=FALSE, message=FALSE }
+if (!"kableExtra" %in% installed.packages()) install.packages("kableExtra")
+if (!"purrr" %in% installed.packages()) install.packages("purrr")
+if (!"questionr" %in% installed.packages()) install.packages("questionr")
+if (!"psych" %in% installed.packages()) install.packages("psych")
+if (!"car" %in% installed.packages()) install.packages("car")
+if (!"corrplot" %in% installed.packages()) install.packages("corrplot")
+if (!"dplyr" %in% installed.packages()) install.packages("dplyr")
+if (!"tidyverse" %in% installed.packages()) install.packages("tidyverse")
+if (!"ggplot2" %in% installed.packages()) install.packages("ggplot2")
+if (!"lubridate" %in% installed.packages()) install.packages("lubridate")
+if (!"mice" %in% installed.packages()) install.packages("mice")
+if (!"readr" %in% installed.packages()) install.packages("readr")
+```
+
+Jorge: porfa busca en internet para qué sirve cada librería y pon una línea un poco para decir por qué utilizamos cada una
+
+
+
+
+Librerías:
+
+
+```{r packages, warning=FALSE, message=FALSE}
+library(kableExtra)
+library(purrr)
+library(questionr)
+library(psych)
+library(car)
+library(corrplot)
+library(dplyr)
+library(tidyverse) # for data transformation 
+library(ggplot2) # to plot beutiful grapt
+library(lubridate) # to handle dates in elegant way
+library(mice) # to check missing data
+library(readr) # librería para leer datos
+```
+
+
+### 2. CREACIÓN DE DIRECTORIO DE TRABAJO E IMPORTACIÓN DE LOS DATOS
+
+
+Tenemos dos alternativas para la lectura de los datos: fijando un directorio de trabajo o leyendo los dataset desde una ubicación web
+
+Fijamos un directorio de trabajo:
+
+```{r setwd, warning=FALSE}
+#setwd("rellenar con directorio")
+```
+
+Leemos los dos dataset
+
+```{r  readata, warning=FALSE}
+datos <- read.csv("DATASET TFM_v2_12072021.csv")
+datos_galicia <- read.csv("Galicia_definitivo.csv")
+```
+
+Lectura de datos desde github 
+
+```{r readfromurl, warning=FALSE}
+library (readr) # librería para leer datos
+url = "https://raw.githubusercontent.com/TFM123456/Datos/main/Galicia_definitivo.csv"  # URL actualizada 12/08/2021- debería funcionar para todos
+# url2 = "https://github.com/TFM123456/Big_Data_and_Data_Science_UCM/blob/main/Galicia_definitivo.csv"
+datos_galicia = as.data.frame(read.csv(url(url)))
+```
+
+```{r readfromurl2, warning=FALSE}
+url1 = "https://raw.githubusercontent.com/TFM123456/Datos/main/DATASET%20TFM_v2_12072021.csv"  # URL actualizada 12/08/2021- debería funcionar para todos
+datos = as.data.frame(read.csv(url(url1)))
+
+```
+
+
+### 3. DESCRIPCIÓN GENERAL DEL DATASET : INSPECCIÓN ANALÍTICA Y VISUAL
+
+
+En este script tenemos contamos con 2 datasets. 
+
+El primero de ellos, el de "datos" es aplicable al conjunto del territorio español, ya que las variables recogen información para todas las comunidades autónomas. 
+
+JORGE: Sobre este dataset,tenemos que decir que es compuesto, es decir, que se ha generado a partir de unos ya existente : xxxxxxxxxxxxxxxxxxxx al que hemos unido otro con información sobre variables mayoritariamente geográficas, para poder en un futuro, crear modelos más realistas y tener predicciones de mayor calidad, o con un r cuadrado mayor, entre otras razones.
+
+El dataset en el que se va a fundamentar el trabajo fin de máster es el de datos_galicia, que es un subset del dataset anterior.
+
+Hemos optado por trabajar con la información recogida para Galicia, ya que es la Comunidad Autónoma en la que hemos comprobado que la disponibilidad de la información era mayor: ya sea por la mayor recogida de datos o la mayor incidencia del problema de incendios forestales.
+
+El preprocesado va a partir de el dataset_galicia, que se irá viendo modificado.
+
+
+#### 3.1) Exploración inicial y tipo de datos / variables y transformación 
+
+
+```{r setup start, warning=FALSE}
+str(datos_galicia)
+length(names(datos_galicia))
+```
+
+Tenemos un total de 33 variables, de las cuales 14 están en el formato de character, 16 en formato de entero y 3 en formato numérico.
+
+En un primer vistazo vemos que el tipo de formato de estas variables lo tendríamos que transformar, para poder trabajar mejor con ellas.
+
+En este respecto, nuestras propuestas son las siguientes:
+
+-> Transformar la variable de fecha en el formato date:
+
+```{r setupchangedate, warning=FALSE}
+datos_galicia[,c(4)] = as.Date(datos_galicia$fecha, format ="%d/%m/%Y")
+```
+
+-> Transformar las variables geográficas y geológicas en numéricas:
+
+```{r setup tonumeric, warning=FALSE}
+datos_galicia[,c(23:33)] <- lapply(datos_galicia[,c(23:33)], as.numeric)
+```
+
+
+Podemos seguir transformando variables, pero como van a ir acompañadas de más modificaciones, como cambios en sus valores, lo dejaremos para más adelante.
+
+
+-> También hemos considerado eliminar las variables de id concatenado, latlng_explicit y causa_supuesta, porque por la descripción de su contenido su papel o relevancia en nuestro análisis va a ser muy próximo a nulo.
+
+
+```{r setup deletecol, warning=FALSE}
+datos_galicia[,c("ï..Concat")] = NULL
+datos_galicia[,c("latlng_explicit")] = NULL
+datos_galicia[,c("causa_supuesta")] = NULL
+datos_galicia[,c("causa_desc")] = NULL # Eliminamos la variable de la descripción de las causas para no duplicar contenido
+datos_galicia[,c("idcomunidad")] = NULL
+```
+
+Comprobamos que se han eliminado correctamente estas columnas
+
+```{r, checkdel}
+length(names(datos_galicia))
+```
+
+
+Después de realizar las primeras transformaciones a los tipos de datos sin alterar su contenido, hacemos un análisis rápido del dataset y comprobamos la no duplicidad de ids.
+
+
+```{r, uniqueid}
+length(unique(datos_galicia$id)) 
+```
+
+No tenemos valores duplicados porque el número total de valores únicos es el mismo que el número de filas
+
+
+```{r, summary1}
+summary(datos_galicia)
+```
+
+Vemos que aproximadamente la mitad de las variables tienen valores perdidos, que analizaremos luego.
+
+
+```{r, genoverview}
+
+dim(datos_galicia) 
+summary(datos_galicia)
+ 
+```
+
+
+Revisamos de nuevo las numéricas para ver si alguna más podría ser transformada en factor,y realizaremos esta transformación en el apartado siguiente
+
+```{r, filternumeric}
+head(Filter(is.numeric, datos_galicia))
+```
+
+
+En la transformación de variables que haremos a continuación , cambiará el contenido de la variable y el tipo de datos.
+En algunos casos la realizaremos para mejorar la interpretabilidad del modelo y para evitar la pérdida de observaciones en el tratamiento de valores extremos y de valores perdidos.
+
+
+Vamos a generar dos funciones que utilizaremos más adelante para la inspección gráfica superficial:
+
+
+```{r, funcion1, warning=FALSE, message=FALSE}
+dfplot_box <- function(data.frame, p=2){
+  #par(mfrow=c(p,p))
+  df <- data.frame
+  ln <- length(names(data.frame))
+  pl<-list()
+  for(i in 1:ln){
+    if(is.factor(df[,i])){
+      b<-barras_cual(df[,i],nombreEje = names(df)[i])
+      #print(b)
+    } else {
+      
+      b<-boxplot_cont(df[,i],nombreEje = names(df)[i])}
+    
+    pl[[i]]<-b
+  }  
+  
+  return(pl)
+}
+```
+
+Diagrama de cajas para las variables cuantitativas 
+
+```{r boxplot, warning=FALSE, message=FALSE}
+boxplot_cont<-function(var,nombreEje){
+  dataaux<-data.frame(variable=var)
+  ggplot(dataaux,aes(y=variable))+
+    geom_boxplot(aes(x=""),notch=TRUE, fill="orchid") +
+    stat_summary(aes(x="") ,fun.y=mean, geom="point", shape=8) +
+    xlab(nombreEje)+ theme_light()+ theme(axis.title.y = element_blank())
+}
+```
+
+Vamos a crear un subset de variables numéricas para representar un primer boxplot
+
+```{r separanum, warning=FALSE, message=FALSE}
+input<-as.data.frame(datos_galicia[,-(1)])
+row.names(input)<-datos_galicia$id
+
+```
+
+Dentro de input vamos a hacer un subset para las numéricas y otro para las categóricas porque la identificación es distinta:
+
+```{r separanum2, warning=FALSE, message=FALSE}
+
+numericas_input <- input %>% select(is.numeric)
+no_numericas_input <- input %>% select(!is.numeric)
+
+length(names(numericas_input))
+length(names(no_numericas_input))
+
+```
+
+Reproducimos este código para prevenir errores en la representación de gráficos
+
+```{r warn, echo=FALSE}
+warning = FALSE 
+```
+
+
+### 4. TRANSFORMACIÓN Y CREACIÓN DE NUEVAS VARIABLES
+
+Vamos a hacer una revisión rápida del contenido de cada una de las variables con :
+
+
+```{r rev, echo=FALSE}
+head(datos_galicia)
+str(datos_galicia)
+```
+
+
+Por lo observado, podría ser significativo realizar transformaciones en las variables de:
+
+
+* **1. Transformación de idprovincia, municipio y comunidad**
+
+* **2. Transformación de causas a categórica** 
+
+* **3. Creación de nuevas columnas en fecha para : trimestre, años y meses **
+
+* **4. Tranformación de las variables de tiempo**
+
+* **5. Dicotomizar muertos heridos**
+
+* **6. Categorizar la dirección del viento en función de 8 ejes**
+
+* **7. Dicotomizar precipitaciones**
+
+* **8. Sustituir presión máxima y mínima por una columna con su rango**
+
+* **9. Categorizar gastos**
+
+
+
+
+
+**1 . Transformación de idprovincia, municipio y comunidad**
+
+Esta variable vamos a categorizarla porque consideramos que va a ser más informativa de esta forma y por su contenido no tiene sentido tratarla como si fuera numérica.
+
+De igual manera vamos a tratar la variable del municipio como si fuera categórica ya que no hay ninguna información relevante si el tratamiento se realizara de forma numérica. Eliminamos la columna en formato numérico para no duplicar la información.
+
+```{r trans1, echo=FALSE}
+datos_galicia$idprovincia[datos_galicia$idprovincia == 15] <- "A Coruña"
+datos_galicia$idprovincia[datos_galicia$idprovincia == 27] <- "Lugo"
+datos_galicia$idprovincia[datos_galicia$idprovincia == 32] <- "Ourense"
+datos_galicia$idprovincia[datos_galicia$idprovincia == 36] <- "Pontevedra"
+
+datos_galicia$idmunicipio <- datos_galicia$municipio # y eliminamos municipio
+
+datos_galicia$municipio = NULL
+```
+
+En principio no vamos a eliminar ninguna variable por si pudiera ser utilizada en la modelización:
+
+
+
+**2 . Transformación de causas a categórica**
+
+
+Veremos más adelante que la variable causa va a ser la variable objetivo categórica por lo que hay que categorizarla,además, al realizar esta transformación simplificamos dos tipologías de causa en una sola ya que la información que reúnen es la misma.
+
+
+```{r trans2, echo=FALSE}
+datos_galicia$causa <- replace(datos_galicia$causa , which(datos_galicia$causa==3),2)
+datos_galicia$causa <- factor(datos_galicia$causa,
+                              labels=c("rayo", "negligencia", "intencionado",
+                                       "causa desconocida","fuego reproducido"))
+
+datos_galicia$causa = as.character(datos_galicia$causa)
+```
+
+
+**3 . Creación de nuevas columnas en fecha para : trimestre, años y meses**
+
+
+Nos ha parecido una buena opción la creación de tres variables a partir de la de fecha porque nos podrían proporcionar
+en el futuro análisis más opciones para agrupar por criterios temporales
+
+Además, facilita la interpretabilidad ya que la lectura en formato fecha a veces es menos legible y se tarda más en procesar.
+
+
+Como realizamos esta creación de variables a partir del paquete Dplyr que lo que hace es transformar el dataset incluyendo una
+nueva columna en este caso, renombramos el dataset con el nombre estándar que tenía de "datos_galicia" para seguir trabajando con
+él sin niguna alteración.
+
+Partimos de la variable fecha adaptada al formato date en el primer apartado:
+
+
+```{r trans3, echo=FALSE}
+por_trimestres = datos_galicia %>% mutate(Trimestre = as.factor(quarters(fecha)))
+por_meses = por_trimestres %>% mutate(Mes = as.factor(months(fecha)))
+por_año = por_meses %>% mutate(Año = year(fecha))
+
+datos_galicia = por_año
+
+datos_galicia$Año = as.character(datos_galicia$Año)
+```
+
+
+**4 . Tranformación de las variables de tiempo**
+
+
+En esta transformación planteamos el cambios de formato de las dos variables temporales que tenemos en el dataset, de minutos a horas sobretodo por cuestiones de interpretabilidad, ya que es más sencillo de valorar en el momento la gravedad del incendio si la duración y el tiempo de extinción se presentan en horas y minutos que en el total de minutos.
+
+Primero vemos las primeras filas de esta variable y el formato inicial
+
+
+```{r trans4, echo=FALSE}
+head(datos_galicia$time_ctrl)
+head(datos_galicia$time_ext)
+```
+
+Creamos una variable puente para trabajar con ella y verificar que nos salen bien las transformaciones
+
+
+```{r trans41, echo=FALSE}
+totalMinutes = datos_galicia$time_ctrl
+
+hour <- floor(totalMinutes / 60) # Redondea a la baja la hora
+minute <- totalMinutes %% 60 * 0.01 # %% nos devuelve el resto de dividir entre 60
+new_time <- hour + minute
+
+datos_galicia$time_ctrl = new_time # Reemplazamos la variable que teníamos por la transformada
+
+head(sort(datos_galicia$time_ctrl)) # Comprobamos que al ordenar de forma creciente sí que funcióna
+str(datos_galicia)
+```
+
+Repetimos el mismo proceso con time_ext 
+
+```{r trans42, echo=FALSE}
+totalMinutes2 = datos_galicia$time_ext
+
+hour2 <- floor(totalMinutes2 / 60) 
+minute2 <- totalMinutes2 %% 60 * 0.01 
+new_time2 <- hour + minute
+
+datos_galicia$time_ext = new_time2 
+
+head(sort(datos_galicia$time_ext))
+
+```
+
+
+**5 . Dicotomizar muertos heridos**
+
+En el caso de las variables de muertos y heridos, las vamos a dicotomizar asumiendo que en las observaciones donde
+no tenemos información recogida, el valor va a ser 0. 
+
+De esta manera también prevenimos en el futuro un posible problema
+con los valores perdidos. Presentamos las tablas para mostrar que no hay valores diferentes a los dicotómicos que la variable
+debería adoptar.
+
+
+```{r trans5, echo=FALSE}
+datos_galicia$muertos <- replace(datos_galicia$muertos , which(is.na(datos_galicia$muertos)),0)
+datos_galicia$heridos <- replace(datos_galicia$heridos , which(is.na(datos_galicia$heridos)),0)
+
+
+datos_galicia$muertos<-replace(datos_galicia$muertos, which(datos_galicia$muertos > 0), 1)
+datos_galicia$heridos<-replace(datos_galicia$heridos, which(datos_galicia$heridos > 0), 1)
+
+table(datos_galicia$muertos)
+table(datos_galicia$heridos)
+
+datos_galicia$muertos = as.factor(datos_galicia$muertos)
+datos_galicia$heridos = as.factor(datos_galicia$heridos)
+
+```
+
+
+**6 .Categorizar la dirección del viento en función de 8 ejes**
+
+JORGE : Web scrapping para poner la imagen del gráfico con las direcciones del viento!!
+
+En esta variable que contiene la información sobre la dirección del viento, la acción que vamos a tomar es tramificarla y 
+asignarle una orientación en función de los grados que tenga. Con estos datos la enmarcamos en una de las 8 categorías posibles
+para la orientación :
+
+
+```{r trans6, echo=FALSE}
+datos_galicia$DIR<-replace(datos_galicia$DIR, which((datos_galicia$DIR < 0)|(datos_galicia$DIR>36)), NA)
+
+datos_galicia[,"DIR_VIENTO"] <- cut(datos_galicia$DIR,breaks = c(0, 2.25, 6.75, 11.25, 15.75, 20.25, 24.75, 29.25, 33.75, 36),
+labels = c("N","NE","E","SE","S","SW","W","NW","N") ) 
+
+datos_galicia$DIR = NULL
+
+table(datos_galicia$DIR_VIENTO)
+table(unique(datos_galicia$DIR_VIENTO))
+
+```
+
+
+Se realizan rupturas de 4.5º por cada dirección.
+
+0,36 = N -> Por tanto el Norte comprende entre 33.25 y 2.25
+4,5 = NE -> (2.25 - 6.75)
+9 = E -> (6.75 - 11.25)
+13,5 = SE (11.25 - - 15.75)
+18 = S (15.75 - 20.25)
+22,5 = SW -> (20.25 - 24.75)
+27 = W -> (24.75 - 29.25)
+31,5 = NW -> (29.25 - 33.75)
+
+
+**7 . Dicotomizar precipitaciones**
+
+Esta variable tiene un número de observaciones cuyo valor es cero, muy elevado, entonces esto nos sugiere pensar que al margen
+del total de precipitaciones, puede ser más significativo el hecho en sí de que las haya o de que no las haya, por eso vamos a dicotomizarla y a comprobar con table que los valores restantes no adoptan valores diferentes de los dos posible.
+
+
+```{r trans07, echo=FALSE}
+total_ceros = datos_galicia %>% filter(PRECIPITACION == 0)
+length(total_ceros$PRECIPITACION)
+```
+
+En el caso de las variables de muertos y heridos, las vamos a dicotomizar asumiendo que en las observaciones donde no tenemos información recogida, el valor va a ser 0:
+
+
+```{r trans7, echo=FALSE}
+datos_galicia$PRECIPITACION <- replace(datos_galicia$PRECIPITACION , which(is.na(datos_galicia$PRECIPITACION)),0)
+
+datos_galicia$PRECIPITACION<-replace(datos_galicia$PRECIPITACION, which(datos_galicia$PRECIPITACION > 0), 1)
+
+table(datos_galicia$PRECIPITACION)
+
+datos_galicia$PRECIPITACION = as.factor(datos_galicia$PRECIPITACION)
+```
+
+
+**8 .Sustituir presión máxima y mínima por una columna con su rango**
+
+
+La creación de variables numéricas puede ser beneficiosa para obtener mejores resultados en nuestro modelo y más precisión,
+por eso en este caso hemos creado una nueva variable que consensa la información de dos variables de presión máxima y presión mínima en una sola , que es el rango. 
+
+
+```{r trans8, echo=FALSE}
+datos_galicia[,"PRES_RANGE"] <- datos_galicia$PRESMAX - datos_galicia$PRESMIN
+
+datos_galicia$PRESMAX = NULL
+datos_galicia$PRESMIN = NULL
+```
+
+
+**9 . Categorizar los gastos**
+
+
+A raíz del la función summary inicial, hemos visto que la variable de gastos tenía una proporción importante de valores
+perdidos y parecía razonable categorizarla porque la eliminación de estas observaciones suponía prácticamente la desaparición
+del dataset. El contenido de la variable lo hemos tramificado en función del valor y hemos creado una categoría adiciona del
+"NO INFO" que significa que no hay información disponible.
+
+
+```{r trans9, echo=FALSE}
+summary(datos_galicia$gastos)
+head(datos_galicia$gastos)
+
+
+datos_galicia[,"gastos2"] <- cut(datos_galicia$gastos,breaks = c(0,5000, 10000000),
+                                 labels = c("< 5K ",">5K") ) 
+
+
+datos_galicia$gastos2 = as.character(datos_galicia$gastos2)
+
+datos_galicia$gastos2 = datos_galicia$gastos2 %>% replace_na("NO INFO")
+
+datos_galicia$gastos = datos_galicia$gastos2
+
+datos_galicia$gastos = as.factor(datos_galicia$gastos)
+
+datos_galicia$gastos2 = NULL
+
+table(datos_galicia$gastos)
+```
+
+
+### 5. ESTUDIO Y TRATAMIENTO DE OUTLIERS - VALORES EXTREMOS
+
+
+#### 5.1 Identificación de los outliers
+
+
+Podemos utilizar algunas funciones de apoyo que hemos creado:
+
+
+**->** Función FindOutliers: la primera de ellas fija los quartiles 1 y 3 entre los que se debería concentrar el grosso de la información y fuera de ese rango reconocer a los valores como extremos . Se fija tanto un límite superior como uno inferior que utilizar el mismo criterio de la función de boxplot, que sería 1,5 veces el rango intercuartílico.
+
+La función boxplot() detecta outliers como todo valor que está más allá de los bigotes. Los bigotes son las líneas que se determinan como el tercer cuartil + 1.5 veces el rango intercuartílico (Tercer cuartil menos el primer cuartil) y el primer cuartil -1.5 veces el rango intercuartílico.
+
+Bigote superior=3Q+1.5*RIC
+
+Bigote inferior=1Q-1.5*RIC
+
+
+La función devuelve una columna con el total de valores extremos. 
+
+**->** Función InciOutliers: esta función recibe dos input. Uno de ellos va a ser la columna con los valores perdidos que habíamos
+extraído con la función anterior y el otro va a ser nuestro dataset de datos_galicia en este caso. El resultado que nos va a devolver es la incidencia del total de filas de los outliers sobre las filas del dataset en porcentaje.
+
+**->** Función TotalOutliers: recibe como input una columna que debería contener los outliers y devuelve la longitud del vector
+de dicha columna.
+
+**->** La función de RemoveOutliers recibe dos input, un dataset y una columna de ese mismo dataset que queremos que evalúe en cuanto a valores extremos para eliminarlos posteriormente.
+
+
+
+```{r funciones outliers, warning=FALSE }
+FindOutliers <- function(data) {
+  Q1 <- quantile(data, .25,na.rm = TRUE)
+  Q3 <- quantile(data, .75,na.rm = TRUE)
+  IQR <- IQR(data,na.rm = TRUE) #Or use IQR(data)
+  # we identify extreme outliers
+  extreme.threshold.upper = (Q3 + 1.5*IQR)
+  extreme.threshold.lower = (Q1 - 1.5*IQR)
+  result <- which(data > extreme.threshold.upper | data < extreme.threshold.lower)
+}
+
+InciOutliers <- function(dataset,columna) {
+  
+  TotalOutliers = length(columna)
+  Lengthdataset = dim(dataset)[1]
+  Porc_outliers = (TotalOutliers / Lengthdataset )*100
+  result <- Porc_outliers
+}
+
+TotalOutliers <- function(columna) {
+  
+  a = length(columna)
+  result <- a
+}
+
+RemoveOutliers <- function(dataset,column) {
+  Q1 <- quantile(column, .25,na.rm = TRUE)
+  Q3 <- quantile(column, .75,na.rm = TRUE)
+  IQR <- IQR(column,na.rm = TRUE) #Or use IQR(data)
+  extreme.threshold.upper = (Q3 + 1.5*IQR)
+  extreme.threshold.lower = (Q1 - 1.5*IQR)
+  # we identify extreme outliers
+  
+  result <- subset(dataset, column> extreme.threshold.lower & column< extreme.threshold.upper)
+}
+
+```
+
+Vamos a crear un subset de variables numéricas para representar un primer boxplot con las transformaciones que tenemos.Para ello vamos a eliminar la columna de id y la variable objetivo continua de las pérdidas y la de la causa.De este dataset vamos a extraer las numéricas, que son las que podremos representar y utilizaremos la función del comienzo del script.
+
+
+```{r subset1, echo=FALSE, warning=FALSE, message=FALSE}
+input<-as.data.frame(datos_galicia[,-(1)])
+row.names(input)<-datos_galicia$id
+```
+
+Dentro de input vamos a hacer un subset para las numéricas y otro para las categóricas porque la identificación es distinta:
+
+
+```{r subset2, echo=FALSE, warning=FALSE, message=FALSE}
+numericas_input <- input %>% select(is.numeric)
+no_numericas_input <- input %>% select(!is.numeric)
+
+```
+
+
+```{r subset02, echo=FALSE, warning=FALSE, message=FALSE}
+listaGraf_input <- dfplot_box(numericas_input) #Boxplots
+gridExtra::marrangeGrob(listaGraf_input, nrow = 4, ncol = 5)
+```
+
+En la mayoría de variables es evidente que hay valores extremos y a raíz del análisis gráfico, recibirán tratamientos distintos:
+
+Para cada una de las variables contenidas en el subset de numéricas input, vamos a identificar los valores extremos así
+como calcular su incidencia. Después crearemos el dataframe de incidencia a partir de este, que contendrá en una columna los nombres de las variables y en otra su incidencia.
+
+A MEJORAR- a ver si os sale: Intentar usar apply lapply para poder hacer esto con todas las variables y simplificar
+
+
+```{r porc_outliers, echo=FALSE, warning=FALSE, message=FALSE}
+
+outliers_superficie = FindOutliers(datos_galicia$superficie)
+O_1 = InciOutliers(datos_galicia,outliers_superficie)
+
+outliers_lat = FindOutliers(datos_galicia$lat)
+O_2 = InciOutliers(datos_galicia,outliers_lat)
+
+outliers_lng = FindOutliers(datos_galicia$lng)
+O_3 = InciOutliers(datos_galicia,outliers_lng)
+
+outliers_time_ctrl = FindOutliers(datos_galicia$time_ctrl)
+O_4 = InciOutliers(datos_galicia,outliers_time_ctrl)
+
+outliers_time_ext = FindOutliers(datos_galicia$time_ext)
+O_5 = InciOutliers(datos_galicia,outliers_time_ext)
+
+outliers_personal = FindOutliers(datos_galicia$personal)
+O_6 = InciOutliers(datos_galicia,outliers_personal)
+
+outliers_medios = FindOutliers(datos_galicia$medios)
+O_7 = InciOutliers(datos_galicia,outliers_medios)
+
+outliers_perdidas = FindOutliers(datos_galicia$perdidas)
+O_8 = InciOutliers(datos_galicia,outliers_perdidas)
+
+
+outliers_ALTITUD = FindOutliers(datos_galicia$ALTITUD)
+O_9 = InciOutliers(datos_galicia,outliers_ALTITUD)
+
+outliers_TMEDIA = FindOutliers(datos_galicia$TMEDIA)
+O_10 = InciOutliers(datos_galicia,outliers_TMEDIA)
+
+outliers_TMIN = FindOutliers(datos_galicia$TMIN)
+O_11 = InciOutliers(datos_galicia,outliers_TMIN)
+
+outliers_TMAX = FindOutliers(datos_galicia$TMAX)
+O_12 = InciOutliers(datos_galicia,outliers_TMAX)
+
+outliers_VELMEDIA = FindOutliers(datos_galicia$VELMEDIA)
+O_13 = InciOutliers(datos_galicia,outliers_VELMEDIA)
+
+outliers_RACHA = FindOutliers(datos_galicia$RACHA)
+O_14 = InciOutliers(datos_galicia,outliers_RACHA)
+
+outliers_SOL = FindOutliers(datos_galicia$SOL)
+O_15 = InciOutliers(datos_galicia,outliers_SOL)
+
+outliers_PRES_RANGE = FindOutliers(datos_galicia$PRES_RANGE)
+O_16 = InciOutliers(datos_galicia,outliers_PRES_RANGE)
+
+
+variable <- c(names(numericas_input))
+incidencia <- c(O_1,O_2,O_3,O_4,O_5,O_6,O_7,O_8,O_9,O_10,O_11,O_12,O_13,O_14,O_15,O_16)
+
+length(incidencia)
+incidencia_inicial <- data.frame(variable,
+                           incidencia)
+incidencia_inicial
+
+```
+
+
+
+Una parte significativa de las variables requiere algún tratamiento para mitigar el efecto de los valores extremos.
+
+En este dataset realizaremos un tratamiento particular de los valores extremos, lo definimos así porque va a ser parcial, ya que algunas de estas observaciones que se salen de los umbrales fijados entre el primer y el 3 cuartil pueden proporcionar información significativa. Es decir, que los valores atípicos en algunos caso pueden llegar a ser considerados como puntos de interés . 
+
+Por lo tanto, pese a que su impacto desestabiliza tanto la media y la mediana de las observaciones, esta desviación es asumible debido a la tipología de los datos. 
+
+En el caso concreto de este dataset por ejemplo, sería muy visibleu un ejemplo  ver con la superficie quemada. Como veremos a continuación, la presencia de valores anómalos es fuerte en esta variable, ya que un porcentaje significativo de las observaciones se corresponde con extensiones de terrenos quemado. La presencia de incendios con estas fuertes dimensiones, aunque sea reducida es significativa, por eso no podemos omitirla en su totalidad. 
+
+
+
+#### 5.2 Tratamiento de los outliers
+
+
+En primer lugar hemos visto que en la variable de altitud el porcentaje de extremos es muy alto por lo que hemos optado por
+categorizarla para evitar tener que eliminar un 12,27 % de las observaciones. 
+
+En este caso la transformación a variables categóricas va a ser una tramificación
+
+
+**10 . Tramificar altitud**
+
+
+```{r trans10, echo=FALSE, warning=FALSE, message=FALSE}
+head(datos_galicia$ALTITUD)
+
+summary(datos_galicia$ALTITUD)
+datos_galicia[,"ALTITUD2"] <- cut(datos_galicia$ALTITUD,breaks = c(0,80,125,150),
+                                  labels = c("Inferior a 80","Entre 80-125","Superior a 125") ) 
+
+head(datos_galicia$ALTITUD)
+a = datos_galicia[,"ALTITUD2"]
+b = datos_galicia[,"ALTITUD"]
+s = as.data.frame(a)
+
+s[,"b"] = b
+
+head(s)
+```
+
+El dataframe que hemos bautizado con s para simplificar, es un dataset de comprobación para verificar que la tramificación ha sido correcta.Comprobamos que esta transformación ha sido correcta. Tenemos varios ejemplos de estos dataset de comprobación s a lo largo del script.
+
+```{r transALT1, warning=FALSE, message=FALSE}
+
+datos_galicia$ALTITUD2 = as.character(datos_galicia$ALTITUD2)
+
+datos_galicia$ALTITUD2 = datos_galicia$ALTITUD2 %>% replace_na("NO INFO")
+
+datos_galicia$ALTITUD = datos_galicia[,"ALTITUD2"]
+
+datos_galicia$ALTITUD = as.factor(datos_galicia$ALTITUD)
+
+datos_galicia[,"ALTITUD2"] = NULL
+
+table(datos_galicia$ALTITUD)
+
+```
+
+
+Después de realizar esta transformación tenemos que volver a cargar la parte correspondiente de las variables numéricas para conocer la incidencia de las variables restantes como numéricas.
+
+
+```{r transALT2, echo=FALSE, warning=FALSE, message=FALSE}
+
+input<-as.data.frame(datos_galicia[,-(1)])
+row.names(input)<-datos_galicia$id
+
+numericas_input <- input %>% select(is.numeric)
+names(numericas_input)
+
+length(names(numericas_input))
+variable <- c(names(numericas_input))
+incidencia <- c(O_1,O_2,O_3,O_4,O_5,O_6,O_7,O_8,O_10,O_11,O_12,O_13,O_14,O_15,O_16)
+
+
+incidencia_outliers <- data.frame(variable,
+                                  incidencia)
+incidencia_outliers
+```
+
+Respecto al dataframe anterior de incidencia, en este que se ha reescrito con el mismo nombre, ya no figura la variable de altitud por lo que es una variable menos a tratar. Comenzamos la eliminación de los valores extremos con las variables de medios, superficie, el tiempo transcurrido hasta entrar en fase de control del incendio ( time_ctrl) y el tiempo transcurrido hasta la extinción del incendio ( time_ext)
+
+
+```{r quita_outliers, echo=FALSE, warning=FALSE, message=FALSE}
+datos_galicia = RemoveOutliers(datos_galicia,datos_galicia$medios)
+
+datos_galicia = RemoveOutliers(datos_galicia,datos_galicia$superficie) 
+
+datos_galicia = RemoveOutliers(datos_galicia,datos_galicia$time_ctrl)
+
+datos_galicia = RemoveOutliers(datos_galicia,datos_galicia$time_ext) 
+
+```
+
+Una vez eliminados estos outliers, vamos a realizar otra transformación de la variable de VELMEDIA, ya que el porcentaje
+de valores extremos (9.16%) sobre el total de las observaciones es significativo, por lo que se va a categorizar. 
+
+Esta variable
+contiene información sobre la velocidad media del viento y se puede tramificar. También disponemos del dataset de comprobación s ( mecionado anteriormente) en el que se puede verificar si la tramificación ha sido correcta.
+
+
+**11 Categorizar velocidad media**
+
+Hemos decidio también categorizar la velocidad media del viento, porque es una variable que presenta un porcentaje elevado de outliers .
+
+
+```{r trans11, echo=FALSE, warning=FALSE, message=FALSE}
+
+datos_galicia[,"VELMEDIA2"] <- cut(datos_galicia$VELMEDIA,breaks = c(0,2, 4, 6,8,20),
+                                   labels = c("< 2 m/s","2-4 m/s","4-6 m/s","6-8 m/s","> 8 m/s") ) 
+
+a = datos_galicia[,"VELMEDIA2"]
+b = datos_galicia[,"VELMEDIA"]
+s = as.data.frame(a)
+
+s[,"b"] = b
+
+datos_galicia$VELMEDIA = datos_galicia[,"VELMEDIA2"]
+
+datos_galicia[,"VELMEDIA2"] = NULL
+
+
+input = as.data.frame(datos_galicia[,-(1)])
+row.names(input) = datos_galicia$id
+
+numericas_input <- input %>% select(is.numeric)
+
+names(numericas_input)
+
+variable <- c(names(numericas_input))
+incidencia <- c(O_1,O_2,O_3,O_4,O_5,O_6,O_7,O_8,O_10,O_11,O_12,O_14,O_15,O_16)
+
+
+incidencia_outliers <- data.frame(variable,
+                                  incidencia)
+
+incidencia_outliers
+
+```
+
+
+Continuamos con la eliminación de los valores extremos, en este caso para las variales de latitud y del rango entre la presión máxima y la presión mínima. Después de realizar esta eliminación, representamos de nuevo para ver el aspecto de los boxplot de las variables numéricas.
+
+
+```{r quita_outliers2, echo=FALSE, warning=FALSE, message=FALSE}
+datos_galicia = RemoveOutliers(datos_galicia,datos_galicia$lat) 
+
+datos_galicia = RemoveOutliers(datos_galicia,datos_galicia$PRES_RANGE) 
+
+
+input<-as.data.frame(datos_galicia[,-(1)])
+row.names(input)<-datos_galicia$id
+numericas_input <- input %>% select(is.numeric)
+
+
+listaGraf_input <- dfplot_box(numericas_input) 
+gridExtra::marrangeGrob(listaGraf_input, nrow = 4, ncol = 5)
+```
+
+La variable de personal es la sigue presentando valores extremos que distorsionan los gráficos de caja y bigotes. Eliminamos estas observaciones.
+
+```{r quita_outliers3, echo=FALSE}
+datos_galicia = RemoveOutliers(datos_galicia,datos_galicia$personal) 
+
+```
+
+Tenemos hacer el proceso que hemos bautizado como " regeneración de las Os", que es volver a crear el listado de incidencia
+que habíamos creado en un inicio, con el dataset actual. En la variable de incidencia final se ve cómo el impacto de los outliers no es tan fuerte como al comienzo de esta sección. Además queda una incidencia residual que vamos a mantener porque, como ya explicamos,pueden ser a su vez puntos de interés.
+
+Regeneramos las O´s
+
+
+```{r regeneraOs, echo=FALSE, warning=FALSE, message=FALSE}
+
+outliers_superficie = FindOutliers(datos_galicia$superficie)
+O_1 = InciOutliers(datos_galicia,outliers_superficie)
+
+outliers_lat = FindOutliers(datos_galicia$lat)
+O_2 = InciOutliers(datos_galicia,outliers_lat)
+
+outliers_lng = FindOutliers(datos_galicia$lng)
+O_3 = InciOutliers(datos_galicia,outliers_lng)
+
+outliers_time_ctrl = FindOutliers(datos_galicia$time_ctrl)
+O_4 = InciOutliers(datos_galicia,outliers_time_ctrl)
+
+outliers_time_ext = FindOutliers(datos_galicia$time_ext)
+O_5 = InciOutliers(datos_galicia,outliers_time_ext)
+
+outliers_personal = FindOutliers(datos_galicia$personal)
+O_6 = InciOutliers(datos_galicia,outliers_personal)
+
+outliers_medios = FindOutliers(datos_galicia$medios)
+O_7 = InciOutliers(datos_galicia,outliers_medios)
+
+outliers_perdidas = FindOutliers(datos_galicia$perdidas)
+O_8 = InciOutliers(datos_galicia,outliers_perdidas)
+
+outliers_TMEDIA = FindOutliers(datos_galicia$TMEDIA)
+O_9 = InciOutliers(datos_galicia,outliers_TMEDIA)
+
+outliers_TMIN = FindOutliers(datos_galicia$TMIN)
+O_10 = InciOutliers(datos_galicia,outliers_TMIN)
+
+outliers_TMAX = FindOutliers(datos_galicia$TMAX)
+O_11 = InciOutliers(datos_galicia,outliers_TMAX)
+
+outliers_RACHA = FindOutliers(datos_galicia$RACHA)
+O_12 = InciOutliers(datos_galicia,outliers_RACHA)
+
+outliers_SOL = FindOutliers(datos_galicia$SOL)
+O_13 = InciOutliers(datos_galicia,outliers_SOL)
+
+outliers_PRES_RANGE = FindOutliers(datos_galicia$PRES_RANGE)
+O_14 = InciOutliers(datos_galicia,outliers_PRES_RANGE)
+
+
+input<-as.data.frame(datos_galicia[,-(1)])
+row.names(input)<-datos_galicia$id
+
+numericas_input <- input %>% select(is.numeric)
+
+
+variable <- c(names(numericas_input))
+incidencia <- c(O_1,O_2,O_3,O_4,O_5,O_6,O_7,O_8,O_9,O_10,O_11,O_12,O_13,O_14)
+
+
+incidencia_final <- data.frame(variable,
+                                  incidencia)
+
+incidencia_final
+
+```
+
+Representamos el boxplot de este dataframe con el código que teníamos al principio del script:
+
+```{r boxplot4, echo=FALSE, warning=FALSE, message=FALSE}
+listaGraf_input <- dfplot_box(numericas_input) #Boxplots
+gridExtra::marrangeGrob(listaGraf_input, nrow = 4, ncol = 5)
+
+```
+
+No vamos a tratar los outliers en la variable de pérdidas porque a partir de la funcións de summary inicial hemos visto que tenía un número elevado de observaciones perdidas y es posible que eliminemos esta variable en el próximo apartado:
+
+
+Para las variables no numéricas, (algunas ya las hemos revisado al realizar las transformaciones)comprobamos que no haya observaciones en 
+categorías distintas a las posibles. Esta revisión la podemos hacer extrayendo los niveles de los factores para ver si alguno falta o sobra. 
+En principio todo parece en orden.
+
+
+```{r quita_outliers4, echo=FALSE, warning=FALSE, message=FALSE}
+no_numericas_input <- input %>% select(!is.numeric)
+factores_input <- no_numericas_input %>% select(!is.character)
+
+sapply(factores_input,levels)
+```
+
+
+### 5. ESTUDIO Y TRATAMIENTO DE VALORES PERDIDOS
+
+
+En esta sección queremos que la eliminación de los valores sea efectiva, ya que no proporcionan información e impiden 
+la correcta aplicación de los modelos al dataset. 
+
+En principio mostramos el cabecero del dataset tal y como ha ido progresando en su tranformación y su limpieza y ha cambiado significativamente. 
+
+Ahora lo analizaremos en cuanto a observaciones faltantes.
+
+
+
+```{r missings1, echo=FALSE}
+head(datos_galicia)
+```
+
+
+#### 5.1 Localización
+
+Vamos a comprobar la cantidad de valores perdidos por cada una de las variables en valor absoluto y porcentual
+
+
+```{r missings2, echo=FALSE, warning=FALSE, message=FALSE}
+total_perdidos = sapply(datos_galicia, function(datos_galicia) sum(is.na(datos_galicia))) # Cantidad de perdidos por variable
+porcentaje_perdidos = 100*sapply(datos_galicia, function(datos_galicia) mean(is.na(datos_galicia))) # % de perdidos por variable
+
+total_perdidos
+porcentaje_perdidos
+
+```
+
+En las variables de pérdidas, de velocidad meida y de dirección del viento vemos que tenemos valores faltantes.
+
+Es significativo que solo sean 3 variables a tratar, pero tenemos que tener en cuenta que el tratamiento de valores extremos
+ha sido duro en cuanto a la eliminación de observaciones, dadas las pocas alternativas, por lo que , entre esas observaciones
+eliminadas posiblemente ya se encontraban valores faltantes. 
+
+En cuanto al tratamiento las posibilidades son las mismas que para los outliers: la eliminación de las filas o la imputación de estos valores por la media o la mediana. 
+
+Vamos a decantarnos por la eliminación de observaciones, ya que la imputación no sería correcta en ninguno de los casos:
+
+* En el caso de la variable de pérdidas no,porque el rango es demasiado grande y queda la sensación como de falsificación de la 
+información, además de ser un porcentaje de observaciones muy elevado que tendría que ser imputado por este valor.
+
+*En el caso de las variables categóricas de dirección del viento y de velocidad media, de igual manera es muy arriesgado situar
+todas las observaciones perdidas en una de las categorías, porque distorsionaría el dataset.
+
+
+```{r missings3, echo=FALSE}
+summary(datos_galicia$perdidas)
+summary(datos_galicia$VELMEDIA)
+summary(datos_galicia$DIR_VIENTO)
+```
+
+
+Vamos a eliminar las observaciones en estas 3 variables que están afectadas y comprobaremos de nuevo la presencia de valores perdidos.
+
+Además, una vez eliminadas estas observaciones estudiamos la dimensión del dataset final para ver el total de observaciones y variables en las que se ha simplificado el dataset.
+
+
+Eliminamos la variable de pérdidas por el alto % de NAs
+
+
+```{r missings4, echo=FALSE}
+datos_galicia$perdidas = NULL
+
+datos_galicia = datos_galicia[is.finite(datos_galicia$DIR_VIENTO),]
+datos_galicia = datos_galicia[is.finite(datos_galicia$VELMEDIA),]
+
+
+total_perdidos = sapply(datos_galicia, function(datos_galicia) sum(is.na(datos_galicia))) # Cantidad de perdidos por variable
+total_perdidos
+
+dim(datos_galicia)
+```
+
+
+```{r exportamos, echo=FALSE}
+write.csv(datos_galicia, file = "datos_galicia_limpio.csv")
+```
+
+
+
+### 6. ACCIONES NO REALIZADAS 
+
+
+En este apartado hemos incluido código que hemos valorado utilizar y con el que hemos realizado algunas pruebas, pero con el fin de no sobrecargar nuestros datos de variables categóricas, no lo hemos aplicado
+
+En primer lugar teníamos construida una función que reemplaza los valores extremos pero no nos ha resultado suficientemente correcto este
+tratamiento para utilizarlo.
+
+
+ReemplazarExtremo <- function(x){
+   qnt <- quantile(x, probs=c(.25, .75), na.rm = T)
+   caps <- quantile(x, probs=c(.05, .95), na.rm = T)
+   H <- 1.5 * IQR(x, na.rm = T)
+   x[x < (qnt[1] - H)] <- caps[1]
+   x[x > (qnt[2] + H)] <- caps[2]
+   return(x)
+  }
+
+
+**12. Categorizar time_ctrl**
+
+
+datos_galicia[,"time_ctrl2"] <- cut(datos_galicia$time_ctrl,breaks = c(0,5, 10, 100,10000),
+labels = c("< 5 h","5-10 h","10-100 h","> 100 h") ) 
+a = datos_galicia[,"time_ctrl2"]
+b = datos_galicia[,"time_ctrl"]
+s = as.data.frame(a)
+
+s[,"b"] = b
+
+head(s)
+
+datos_galicia$time_ctrl = datos_galicia[,"time_ctrl2"]
+
+datos_galicia[,"time_ctrl2"] = NULL
+
+
+
+**11. Categorizar time_ext**
+
+
+summary(datos_galicia$time_ctrl)
+
+datos_galicia[,"time_ext2"] <- cut(datos_galicia$time_ext,breaks = c(0,5, 10, 100,10000),
+labels = c("< 5 h","5-10 h","10-100 h","> 100 h") ) 
+
+a = datos_galicia[,"time_ext2"]
+b = datos_galicia[,"time_ext"]
+s = as.data.frame(a)
+
+s[,"b"] = b
+
+head(s)
+
+datos_galicia$time_ext = datos_galicia[,"time_ext2"]
+
+datos_galicia[,"time_ext2"] = NULL
+```
+
+
+
+
