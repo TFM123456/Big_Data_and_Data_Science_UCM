@@ -440,7 +440,6 @@ datos = as.data.frame(read.csv(url(url1)))</code></pre>
 <h3>3. DESCRIPCIÓN GENERAL DEL DATASET : INSPECCIÓN ANALÍTICA Y VISUAL</h3>
 <p>En este script tenemos contamos con 2 datasets.</p>
 <p>El primero de ellos, el de “datos” es aplicable al conjunto del territorio español, ya que las variables recogen información para todas las comunidades autónomas.</p>
-<p>JORGE: Sobre este dataset,tenemos que decir que es compuesto, es decir, que se ha generado a partir de unos ya existente : xxxxxxxxxxxxxxxxxxxx al que hemos unido otro con información sobre variables mayoritariamente geográficas, para poder en un futuro, crear modelos más realistas y tener predicciones de mayor calidad, o con un r cuadrado mayor, entre otras razones.</p>
 <p>El dataset en el que se va a fundamentar el trabajo fin de máster es el de datos_galicia, que es un subset del dataset anterior.</p>
 <p>Hemos optado por trabajar con la información recogida para Galicia, ya que es la Comunidad Autónoma en la que hemos comprobado que la disponibilidad de la información era mayor: ya sea por la mayor recogida de datos o la mayor incidencia del problema de incendios forestales.</p>
 <p>El preprocesado va a partir de el dataset_galicia, que se irá viendo modificado.</p>
@@ -819,7 +818,6 @@ length(names(numericas_input))</code></pre>
 ##     0     1 
 ## 20505    40</code></pre>
 <p><strong>6 .Categorizar la dirección del viento en función de 8 ejes</strong></p>
-<p>JORGE : Web scrapping para poner la imagen del gráfico con las direcciones del viento!!</p>
 <p>En esta variable que contiene la información sobre la dirección del viento, la acción que vamos a tomar es tramificarla y asignarle una orientación en función de los grados que tenga. Con estos datos la enmarcamos en una de las 8 categorías posibles para la orientación :</p>
 <pre><code>## 
 ##    N   NE    E   SE    S   SW    W   NW 
