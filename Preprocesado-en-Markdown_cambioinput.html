@@ -406,18 +406,18 @@ if (!&quot;lubridate&quot; %in% installed.packages()) install.packages(&quot;lub
 if (!&quot;mice&quot; %in% installed.packages()) install.packages(&quot;mice&quot;)
 if (!&quot;readr&quot; %in% installed.packages()) install.packages(&quot;readr&quot;)</code></pre>
 <p>Librerías:</p>
-<pre class="r"><code>library(kableExtra)
-library(purrr)
-library(questionr)
-library(psych)
-library(car)
-library(corrplot)
-library(dplyr)
-library(tidyverse) # for data transformation 
-library(ggplot2) # to plot beutiful grapt
-library(lubridate) # to handle dates in elegant way
-library(mice) # to check missing data
-library(readr) # librería para leer datos</code></pre>
+<pre class="r"><code>library(kableExtra) # librería para facilitar la creación de tablas complejas y su manipulación
+library(purrr) # herramientas para la programación funcional y mejora el trabajo con funciones y la vectorización. Mejora el acceso a elementos dentro de un loop y el acceso a listas
+library(questionr) # conjunto de funciones que facilitan el procesamiento y análisis del estudio: tablas de contingencia, complementos para recodificación de datos,
+library(psych) # librería para el análisis multivariado y construcción de escalas utilizando el análisis factorial y de componentes así como estadísticas descriptivas básicas
+library(car) # librería para aplicar regresiones
+library(corrplot) # aplicada para crear gráficos de correlación
+library(dplyr) # librería con una serie de funciones que simplifican las acciones sobre los datos, muy útiles y bastante rápidas para la manipulación de data frames
+library(tidyverse) # colección de paquetes disponibles en R y orientados a la manipulación, importación, exploración y visualización de datos
+library(ggplot2) # librería de amplio uso en la visualización de datos
+library(lubridate) # permite separar los componentes de la fecha y hora cuando no tienen una estrucutra definida
+library(mice) # librería para imputar datos multivariantes incompletos mediante ecuaciones encadenadas y así checkear datos perdidos
+library(readr) # librería para facilitar la importación de datos desde diversas fuentes hacia un objeto estructurado, posee funciones para importar todo tipo de archivos</code></pre>
 </div>
 <div id="creación-de-directorio-de-trabajo-e-importación-de-los-datos" class="section level3">
 <h3>2. CREACIÓN DE DIRECTORIO DE TRABAJO E IMPORTACIÓN DE LOS DATOS</h3>
