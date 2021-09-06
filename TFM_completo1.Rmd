@@ -1,0 +1,1232 @@
+---
+title: "Preprocesado Trabajo Fin de de Máster"
+date: "15/09/2021"
+output: html_document
+
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+1.	Introducción
+
+a.	Situación actual / descripción del problema
+
+Hoy en día os incendios forestales suponen un grave problema ecológico, social y económico. Poder saber cuándo y dónde se producen, así como cuál es su extensión, a qué vegetación afectan y, sobre todo, por qué se producen y quién o qué los causa, es algo fundamental para evitarlos, protegernos de ellos y así poder conservar nuestro 
+
+Según la organización ecologista internacional Greenpeace, España es uno de los países de la Unión Europea más afectados por los incendios forestales, un problema que amenaza con intensificarse debido a los efectos del cambio climático. 
+En la siguiente imagen se puede ver la cantidad  de incendios por Comunidad Autónoma en nuestro país, siendo la zona noroeste la más afectada:
+
+
+![Image alt attribute](\imagenes\Imagen1.jpg)
+MAPA
+
+Fuente: Greenpeace International, https://es.greenpeace.org/es/trabajamos-en/bosques/incendios-forestales/
+
+
+A continuación mostramos un gráfico con la evolución de las superficies quemadas en España anuales y acumuladas desde 1961-2016:
+
+Foto
+
+
+Gráfico 1: Evolución de las superficies afectadas por los incendios forestales en España 1961-2016.
+
+Fuente: Observatorio de la Sostenibilidad, https://observatoriosociallacaixa.org/-/incendios-forestales-en-espana-importancia-diagnostico-y-propuestas-para-un-futuro-mas-sostenible
+
+
+De cada incendio ocurrido en España, por muy pequeño que sea, se debe registrar un Parte de Incendio Forestal. La recopilación de estos datos es de gran utilidad a la hora de elaborar estadísticas para las administraciones forestales, centros de investigación, 
+Tras analizar todos los datos recogidos de incendios forestales a lo largo de la historia en nuestro país el peor año de la década en cuanto a incendios ha sido 2012, ardiendo un total de 219.956 hectáreas (cuya extensión equivale a la provincia de Vizcaya). 
+
+
+
+b.	Enfoque
+
+Gracias a la recogida de datos estandarizada se ha podido generar conocimiento sobre el tema, algo totalmente imprescindible a la hora de describir y comprender el fenómeno de los incendios y sus peculiaridades, así como la definición y aplicación de posibles soluciones para afrontarlo. 
+
+
+
+
+Es en este punto donde surge la idea de este TFM, queriendo aportar como idea innovadora un modelo que ayude a predecir los incendios, así como las pérdidas económicas que estos puedan suponer. 
+
+Crear un modelo que ayude en la predicción de incendios ayudaría a hacer mucho más eficiente la distribución de los recursos necesarios para la extinción y ayudaría también en la reducción de costes, daños y pérdidas. Aunque también hay tener en cuenta la gran dificultad que presenta el desarrollo de un modelo de predicción de incendios, que no es otra que la incertidumbre asociada al comportamiento humano en relación al fuego. 
+
+No obstante, se intentará desarrollar un modelo basándonos en el histórico de datos de zonas geográficas con más afluencia de incendios en España. 
+
+Una de las Comunidades Autónomas que más sufre este devastador fenómeno año tras año es Galicia. Por ello se ha decidido hacer un enfoque específico al análisis de los incendios producidos en esta Comunidad en este Trabajo Fin de Máster. 
+
+A continuación se muestra un análisis de los incendios ocurridos entre los años 2000 y 2015 en Galicia, en el que se puede ver que el número total de incendios producidos en Galicia asciende a un total de 20.543:
+
+FOTO MAPA
+
+2.	Sección técnica (análisis profundo de la BBDD)
+
+a.	Descripción de los datos 
+
+Para este proyecto se han decidido usar dos BBDD diferentes con el fin de crear una final mucho más completa. 
+
+A continuación mostramos un cuadro con todas las variables presentes en nuestro primer dataset, así como una breve explicación de cada una de ellas:
+
+
+METER TABLA
+
+
+
+Los valores de algunas variables están incluidos a través de códigos, como son el caso de comunidad, provincia, causa y causa_dec. El detalle de estos códigos se encuentra incluido en el apartado Anexos de este proyecto. 
+
+Por otro lado, en el segundo dataset se pueden encontrar las siguientes variables:
+
+
+METER TABLA
+
+
+
+b.	EDA / calidad de los datos
+
+La primera BBDD elegida para este TFM ha sido descargada de CIVIO (https://datos.civio.es/dataset/todos-los-incendios-forestales/), y sus datos proceden de Estadística General de Incendios Forestales (EGIF).
+
+Por otro lado, la segunda BBDD ha sido descargada de Aemet – Open Data: https://opendata.aemet.es/centrodedescargas/productosAEMET
+
+
+
+c.	Programas a usar:
+
+Para la elaboración del trabajo se ha decidido utilizar 4 programas:
+
+- *Excel*: para la fusión de la base de datos que contenía información sobre los incendios forestales en España  y la que reunía la información sobre las variables geográficas / geológicas. Se ha utilizado esta opción el lugar de concatenar con otros programas, porque resultaba mucho más visual. 
+
+- *R* : para el preprocesado y preparación de los datos de los datos. Si bien se han incluido un par de gráficos sobre los valores extremos, se ha optado por utilizar otros programas más óptimos para la representación.
+
+- *Python (desde Jupyter notebook)*: dado que se ha profundizado bastante en la programación del máster en la creación de modelos, selección de variables y predicciones a través de esta herramienta, se ha optado por seguir en la misma línea y aplicar así los conocimientos en distintos lenguajes.
+
+-*ESRI*: algunos de los componentes del grupo habían trabajado con anterioridad con este programa especializado en la representación de mapas, así que han compartido sus conocimientos con el resto y se ha aprovechado para enriquecer el trabajo añadiendo este programa, con más posibilidad de visualización. Además, el tema elegido para este trabajo requería de una buena visualización que se ha podido plasmar a través de este programa específico.
+
+-*GitHub*: se ha usado este portal para compartir el código entre todos los miembros del equipo y así poder hacer cambios.
+
+-*Streamlit*: esta herramienta se ha usado para crear una aplicación web en la que se muestra el análisis de los datos usados en este TFM. 
+
+
+
+## ÍNDICE
+
+
+### ESTRUCTURA:
+
+1. IMPORTACIÓN DE LIBRERÍAS
+
+2. CREACIÓN DE DIRECTORIO DE TRABAJO E IMPORTACIÓN DE LOS DATOS 
+
+3. DESCRIPCIÓN GENERAL DEL DATASET : INSPECCIÓN ANALÍTICA Y VISUAL
+
+4. TRANSFORMACIÓN Y CREACIÓN DE VARIABLES
+
+5. ESTUDIO Y TRATAMIENTO DE OUTLIERS
+
+6. ESTUDIO Y TRATAMIENTO DE VALORES PERDIDOS
+
+
+### 1. IMPORTACIÓN DE LIBRERÍAS
+
+
+Vamos a importar las librerías que utilizaremos para la limpieza y el tratamiento de los datos.
+
+
+```{r libraries, warning=FALSE, message=FALSE, echo=FALSE }
+if (!"kableExtra" %in% installed.packages()) install.packages("kableExtra")
+if (!"purrr" %in% installed.packages()) install.packages("purrr")
+if (!"questionr" %in% installed.packages()) install.packages("questionr")
+if (!"psych" %in% installed.packages()) install.packages("psych")
+if (!"car" %in% installed.packages()) install.packages("car")
+if (!"corrplot" %in% installed.packages()) install.packages("corrplot")
+if (!"dplyr" %in% installed.packages()) install.packages("dplyr")
+if (!"tidyverse" %in% installed.packages()) install.packages("tidyverse")
+if (!"ggplot2" %in% installed.packages()) install.packages("ggplot2")
+if (!"lubridate" %in% installed.packages()) install.packages("lubridate")
+if (!"mice" %in% installed.packages()) install.packages("mice")
+if (!"readr" %in% installed.packages()) install.packages("readr")
+```
+
+```{r packages, warning=FALSE, message=FALSE, echo=FALSE}
+library(kableExtra)
+library(purrr)
+library(questionr)
+library(psych)
+library(car)
+library(corrplot)
+library(dplyr)
+library(tidyverse) # for data transformation 
+library(ggplot2) # to plot beutiful grapt
+library(lubridate) # to handle dates in elegant way
+library(mice) # to check missing data
+library(readr) # librería para leer datos
+```
+
+### 2. CREACIÓN DE DIRECTORIO DE TRABAJO E IMPORTACIÓN DE LOS DATOS
+
+Tenemos dos alternativas para la lectura de los datos: fijando un directorio de trabajo o leyendo los dataset desde una ubicación web
+
+Fijar directorio de trabajo- carpeta GRUPO 3
+```{r setwd, warning=FALSE, echo=FALSE}
+setwd("Documentos")
+```
+
+
+```{r  readata, warning=FALSE, echo=FALSE}
+#datos <- read.csv("DATASET TFM_v2_12072021.csv")
+#datos_galicia <- read.csv("Galicia_definitivo.csv")
+```
+
+Lectura de datos desde github  ###
+
+```{r readfromurl, warning=FALSE, echo=FALSE}
+library (readr) # librería para leer datos
+url = "https://raw.githubusercontent.com/TFM123456/Datos/main/Galicia_definitivo.csv"  # URL actualizada 12/08/2021- debería funcionar para todos
+url2 = "https://github.com/TFM123456/Big_Data_and_Data_Science_UCM/blob/main/Galicia_definitivo.csv"
+datos_galicia = as.data.frame(read.csv(url(url)))
+```
+
+```{r readfromurl2, warning=FALSE, echo=FALSE}#url1 = "https://raw.githubusercontent.com/TFM123456/Datos/main/DATASET%20TFM_v2_12072021.csv"  # URL actualizada 12/08/2021- debería funcionar para todos
+datos = as.data.frame(read.csv(url(url1)))
+
+```
+
+### 3. DESCRIPCIÓN GENERAL DEL DATASET : INSPECCIÓN ANALÍTICA Y VISUAL
+
+
+En este script tenemos contamos con 2 datasets.El de "datos" reúne la información del conjunto del territorio español y el de "datos_galicia" en el que se va a fundamentar este proyecto. Este dataset es una combinación de dos anteriores, la parte relativa a Galicia del de datos y un conjunto de variables geográficas y geológicas añadidas a posteriori.
+
+
+#### 3.1) Exploración inicial y tipo de datos / variables y transformación 
+
+
+```{r setup start, warning=FALSE, results="hide", echo=FALSE}
+str(datos_galicia)
+```
+
+```{r setup start2, warning=FALSE, echo=FALSE}
+length(names(datos_galicia))
+```
+Tenemos un total de 33 variables, de las cuales 14 están en el formato de character, 16 en formato de entero y 3 en formato numérico.
+
+En un primer vistazo vemos que el tipo de formato de estas variables lo tendríamos que transformar, para poder trabajar mejor con ellas.
+
+En este sentido vamos a transformar la variable de fecha en el formato date y las variables geográficas y geológicas en numéricas:
+
+```{r setupchangedate, warning=FALSE, echo=FALSE}
+datos_galicia[,c(4)] = as.Date(datos_galicia$fecha, format ="%d/%m/%Y")
+```
+
+```{r setup tonumeric, warning=FALSE, echo=FALSE}
+datos_galicia[,c(23:33)] <- lapply(datos_galicia[,c(23:33)], as.numeric)
+```
+
+
+ También hemos considerado eliminar las variables de id concatenado, latlng_explicit y causa_supuesta, porque por la descripción de su contenido la relevancia en nuestro análisis va a ser muy reducida.
+
+
+```{r setup deletecol, warning=FALSE, echo=FALSE}
+datos_galicia[,c("ï..Concat")] = NULL
+datos_galicia[,c("latlng_explicit")] = NULL
+datos_galicia[,c("causa_supuesta")] = NULL
+datos_galicia[,c("causa_desc")] = NULL # Eliminamos la variable de la descripción de las causas para no duplicar contenido
+datos_galicia[,c("idcomunidad")] = NULL
+```
+
+
+```{r, checkdel, echo=FALSE, results="hide"}
+length(names(datos_galicia))
+```
+
+```{r, uniqueid, echo=FALSE, results= "hide"}
+
+# Después de realizar las primeras transformaciones a los tipos de datos sin alterar su contenido, hacemos un análisis rápido del dataset y comprobamos la no duplicidad de ids.
+
+length(unique(datos_galicia$id)) 
+
+# No tenemos valores duplicados porque el número total de valores únicos es el mismo que el número de filas
+```
+
+```{r, summary1, results="hide",echo = FALSE}
+summary(datos_galicia)
+
+#Aproximadamente la mitad de las variables tienen valores perdidos, que analizaremos luego.
+
+```
+
+```{r, genoverview, results="hide",echo = FALSE}
+
+dim(datos_galicia) 
+ 
+```
+
+
+Revisamos de nuevo las numéricas para ver si alguna más podría ser transformada en factor,y realizaremos esta transformación en el apartado siguiente
+
+```{r, filternumeric,results="hide",echo = FALSE}
+head(Filter(is.numeric, datos_galicia))
+```
+
+
+En la transformación de variables que haremos a continuación , cambiará el contenido de la variable y el tipo de datos.
+En algunos casos la realizaremos para mejorar la interpretabilidad del modelo y para evitar la pérdida de observaciones en el tratamiento de valores extremos y de valores perdidos.
+
+
+```{r separanum, warning=FALSE, message=FALSE,echo=FALSE}
+
+#Se va a crear un subset de variables numéricas y otro de categóricas para identificar mejor la naturaleza de las variables.
+
+input<-as.data.frame(datos_galicia[,-(1)])
+row.names(input)<-datos_galicia$id
+
+numericas_input <- input %>% select(is.numeric)
+no_numericas_input <- input %>% select(!is.numeric)
+
+length(names(numericas_input))
+length(names(no_numericas_input))
+
+```
+
+
+```{r warn, echo=FALSE}
+
+# Reproducimos el código auxiliar de warning para prevenir errores en la representación de gráficos
+
+warning = FALSE 
+```
+
+
+### 4. TRANSFORMACIÓN Y CREACIÓN DE NUEVAS VARIABLES
+
+Vamos a hacer una revisión rápida del contenido de cada una de las variables  :
+
+
+```{r rev, echo=FALSE, message=FALSE, results='hide'}
+head(datos_galicia)
+str(datos_galicia)
+```
+
+Por lo observado, podría ser significativo realizar las siguientes tranformaciones:
+
+**1 . Transformación de idprovincia, municipio y comunidad**
+
+Esta variable vamos a categorizarla porque consideramos que va a ser más informativa de esta forma y por su contenido no tiene sentido tratarla como si fuera numérica.
+
+De igual manera vamos a tratar la variable del municipio. 
+
+```{r trans1, echo=FALSE, message=FALSE, results='hide'}
+datos_galicia$idprovincia[datos_galicia$idprovincia == 15] <- "A Coruña"
+datos_galicia$idprovincia[datos_galicia$idprovincia == 27] <- "Lugo"
+datos_galicia$idprovincia[datos_galicia$idprovincia == 32] <- "Ourense"
+datos_galicia$idprovincia[datos_galicia$idprovincia == 36] <- "Pontevedra"
+
+datos_galicia$idmunicipio <- datos_galicia$municipio # y eliminamos municipio
+
+# Eliminamos la columna en formato numérico para no duplicar la información.
+datos_galicia$municipio = NULL
+```
+
+```{r trans101, echo=FALSE, message=FALSE, results='hide'}
+table(datos_galicia$idprovincia)
+```
+
+**2 . Transformación de causas a categórica**
+
+En la variable objetivo categórica simplificamos dos tipologías de causa en una sola ya que la información que reúnen es la misma.
+
+```{r trans2, results="hide", echo=FALSE, message=FALSE,}
+datos_galicia$causa <- replace(datos_galicia$causa , which(datos_galicia$causa==3),2)
+datos_galicia$causa <- factor(datos_galicia$causa,
+                              labels=c("rayo", "negligencia", "intencionado",
+                                       "causa desconocida","fuego reproducido"))
+
+datos_galicia$causa = as.character(datos_galicia$causa)
+```
+
+
+**3 . Creación de nuevas columnas en fecha para : trimestre, años y meses**
+
+
+Se van a crear 3 varias temporales a partir de "fecha" para mejorar la intrepretabilidad. 
+
+```{r trans3, results="hide",echo = FALSE}
+
+#A partir del paquete Dplyr que lo que hace es transformar el dataset incluyendo varias columnas que van a extraer los meses, años y trimestres.
+
+#Partimos de la variable fecha adaptada al formato date en el primer apartado:
+
+
+por_trimestres = datos_galicia %>% mutate(Trimestre = as.factor(quarters(fecha)))
+por_meses = por_trimestres %>% mutate(Mes = as.factor(months(fecha)))
+por_año = por_meses %>% mutate(Año = year(fecha))
+
+datos_galicia = por_año
+
+datos_galicia$Año = as.character(datos_galicia$Año)
+```
+
+**4 . Tranformación de las variables de tiempo**
+
+Se cambiará el formato de las dos variables temporales de minutos a horas sobretodo por cuestiones de interpretabilidad, ya que es más sencillo de valorar en el momento la gravedad del incendio si la duración y el tiempo de extinción se presentan en horas y minutos que en el total de minutos.
+
+
+```{r trans4, echo=FALSE,results ="hide"}
+
+#Primero vemos las primeras filas de esta variable y el formato inicial y creamos una variable puente para trabajar con ella y verificar que nos salen bien las transformaciones
+
+
+head(datos_galicia$time_ctrl)
+head(datos_galicia$time_ext)
+```
+
+```{r trans41, echo=FALSE, results="hide"}
+totalMinutes = datos_galicia$time_ctrl
+
+hour <- floor(totalMinutes / 60) # Redondea a la baja la hora
+minute <- totalMinutes %% 60 * 0.01 # %% nos devuelve el resto de dividir entre 60
+new_time <- hour + minute
+
+datos_galicia$time_ctrl = new_time # Reemplazamos la variable que teníamos por la transformada
+head(sort(datos_galicia$time_ctrl)) # Comprobamos que al ordenar de forma creciente sí que funcióna
+
+```
+
+```{r trans42, echo=FALSE, results="hide"}
+
+# Repetimos el mismo proceso con time_ext 
+
+totalMinutes2 = datos_galicia$time_ext
+
+hour2 <- floor(totalMinutes2 / 60) 
+minute2 <- totalMinutes2 %% 60 * 0.01 
+new_time2 <- hour + minute
+datos_galicia$time_ext = new_time2 
+
+```
+**5 . Dicotomizar muertos heridos**
+
+Se van a dicotimizar estas variables asumiendo que en las observaciones donde se dispone de información recogida el valor va a ser 0. 
+
+```{r trans5, echo=FALSE, results="hide"}
+datos_galicia$muertos <- replace(datos_galicia$muertos , which(is.na(datos_galicia$muertos)),0)
+datos_galicia$heridos <- replace(datos_galicia$heridos , which(is.na(datos_galicia$heridos)),0)
+
+
+datos_galicia$muertos<-replace(datos_galicia$muertos, which(datos_galicia$muertos > 0), 1)
+datos_galicia$heridos<-replace(datos_galicia$heridos, which(datos_galicia$heridos > 0), 1)
+
+
+#De esta manera se puede prevenir el problema futuro con los valores perdidos.También se presentan tablas para mostrar que no hay valores diferentes a los dicotómicos que la variable debería adoptar.
+
+
+table(datos_galicia$muertos)
+table(datos_galicia$heridos)
+
+datos_galicia$muertos = as.factor(datos_galicia$muertos)
+datos_galicia$heridos = as.factor(datos_galicia$heridos)
+
+```
+**6 .Categorizar la dirección del viento en función de 8 ejes**
+
+
+Esta variable se va a tramificar asignándole una orientación en función de los grados que tenga. Hay 8 categorías posibles.
+```{r trans6, echo=FALSE, results="hide"}
+datos_galicia$DIR<-replace(datos_galicia$DIR, which((datos_galicia$DIR < 0)|(datos_galicia$DIR>36)), NA)
+
+datos_galicia[,"DIR_VIENTO"] <- cut(datos_galicia$DIR,breaks = c(0, 2.25, 6.75, 11.25, 15.75, 20.25, 24.75, 29.25, 33.75, 36),
+labels = c("N","NE","E","SE","S","SW","W","NW","N") ) 
+
+datos_galicia$DIR = NULL
+
+table(datos_galicia$DIR_VIENTO)
+table(unique(datos_galicia$DIR_VIENTO))
+
+#Se realizan rupturas de 4.5º por cada dirección.
+
+#0,36 = N -> Por tanto el Norte comprende entre 33.25 y 2.25
+#4,5 = NE -> (2.25 - 6.75)
+#9 = E -> (6.75 - 11.25)
+#13,5 = SE (11.25 - - 15.75)
+#18 = S (15.75 - 20.25)
+#22,5 = SW -> (20.25 - 24.75)
+#27 = W -> (24.75 - 29.25)
+#31,5 = NW -> (29.25 - 33.75)
+
+
+```
+
+**7 . Dicotomizar precipitaciones**
+
+Esta variable tiene un número de observaciones cuyo valor es cero, muy elevado. Puede ser más significativo el hecho en sí de que las haya o de que no las haya, por eso se va a dicotimizar.
+
+
+```{r trans07, echo=FALSE, results="hide"}
+total_ceros = datos_galicia %>% filter(PRECIPITACION == 0)
+length(total_ceros$PRECIPITACION)
+
+
+datos_galicia$PRECIPITACION <- replace(datos_galicia$PRECIPITACION , which(is.na(datos_galicia$PRECIPITACION)),0)
+
+datos_galicia$PRECIPITACION<-replace(datos_galicia$PRECIPITACION, which(datos_galicia$PRECIPITACION > 0), 1)
+
+table(datos_galicia$PRECIPITACION)
+
+datos_galicia$PRECIPITACION = as.factor(datos_galicia$PRECIPITACION)
+
+
+```
+
+**8 .Sustituir presión máxima y mínima por una columna con su rango**
+
+Se ha creado una nueva variable que sintetiza la información de dos variables de presión máxima y presión mínima en una sola , que es el rango. 
+
+```{r trans8, echo=FALSE, results="hide"}
+datos_galicia[,"PRES_RANGE"] <- datos_galicia$PRESMAX - datos_galicia$PRESMIN
+
+datos_galicia$PRESMAX = NULL
+datos_galicia$PRESMIN = NULL
+```
+
+
+**9 . Categorizar los gastos**
+
+A raíz del la función summary inicial, se ha visto que la variable de gastos tenía una proporción importante de valores perdidos y parecía razonable categorizarla.
+
+```{r trans9, echo=FALSE, results="hide"}
+summary(datos_galicia$gastos)
+
+datos_galicia[,"gastos2"] <- cut(datos_galicia$gastos,breaks = c(0,5000, 10000000),
+                                 labels = c("< 5K ",">5K") ) 
+
+
+datos_galicia$gastos2 = as.character(datos_galicia$gastos2)
+
+#El contenido de la variable lo hemos tramificado en función del valor y hemos creado una categoría adiciona del
+#"NO INFO" que significa que no hay información disponible.
+
+datos_galicia$gastos2 = datos_galicia$gastos2 %>% replace_na("NO INFO")
+
+datos_galicia$gastos = datos_galicia$gastos2
+
+datos_galicia$gastos = as.factor(datos_galicia$gastos)
+datos_galicia$gastos2 = NULL
+
+table(datos_galicia$gastos)
+```
+
+
+### 5. ESTUDIO Y TRATAMIENTO DE OUTLIERS - VALORES EXTREMOS
+
+
+#### 5.1 Identificación de los outliers
+
+Podemos utilizar algunas funciones de apoyo que hemos creado:
+
+```{r funciones outliers, warning=FALSE, echo=FALSE }
+
+
+#**->** Función FindOutliers: la primera de ellas fija los quartiles 1 y 3 entre los que se debería concentrar el grosso de la información y fuera de ese rango reconocer a los valores como extremos . Se fija tanto un límite superior como uno inferior que utilizar el mismo criterio de la función de boxplot, que sería 1,5 veces el rango intercuartílico. La función devuelve una columna con el total de valores extremos. 
+
+FindOutliers <- function(data) {
+  Q1 <- quantile(data, .25,na.rm = TRUE)
+  Q3 <- quantile(data, .75,na.rm = TRUE)
+  IQR <- IQR(data,na.rm = TRUE) #Or use IQR(data)
+  # we identify extreme outliers
+  extreme.threshold.upper = (Q3 + 1.5*IQR)
+  extreme.threshold.lower = (Q1 - 1.5*IQR)
+  result <- which(data > extreme.threshold.upper | data < extreme.threshold.lower)
+}
+
+
+#La función boxplot() detecta outliers como todo valor que está más allá de los bigotes. Los bigotes son las líneas que se determinan como el tercer cuartil + 1.5 veces el rango intercuartílico (Tercer cuartil menos el primer cuartil) y el primer cuartil -1.5 veces el rango intercuartílico.
+
+#Bigote superior=3Q+1.5*RIC
+
+#Bigote inferior=1Q-1.5*RIC
+
+
+dfplot_box <- function(data.frame, p=2){
+  #par(mfrow=c(p,p))
+  df <- data.frame
+  ln <- length(names(data.frame))
+  pl<-list()
+  for(i in 1:ln){
+    if(is.factor(df[,i])){
+      b<-barras_cual(df[,i],nombreEje = names(df)[i])
+      #print(b)
+    } else {
+      
+      b<-boxplot_cont(df[,i],nombreEje = names(df)[i])}
+    
+    pl[[i]]<-b
+  }  
+  
+  return(pl)
+}
+
+
+# Diagrama de cajas para las variables cuantitativas 
+
+boxplot_cont<-function(var,nombreEje){
+  dataaux<-data.frame(variable=var)
+  ggplot(dataaux,aes(y=variable))+
+    geom_boxplot(aes(x=""),notch=TRUE, fill="orange") +
+    stat_summary(aes(x="") ,fun.y=mean, geom="point", shape=14) +
+    xlab(nombreEje)+ theme_light()+ theme(axis.title.y = element_blank())
+}
+
+
+InciOutliers <- function(dataset,columna) {
+  
+  TotalOutliers = length(columna)
+  Lengthdataset = dim(dataset)[1]
+  Porc_outliers = (TotalOutliers / Lengthdataset )*100
+  result <- Porc_outliers
+}
+
+
+#**->** Función InciOutliers: esta función recibe dos input. Uno de ellos va a ser la columna con los valores perdidos que habíamos
+#extraído con la función anterior y el otro va a ser nuestro dataset de datos_galicia en este caso. El resultado que nos va a devolver es la #incidencia del total de filas de los outliers sobre las filas del dataset en porcentaje.
+
+
+TotalOutliers <- function(columna) {
+  
+  a = length(columna)
+  result <- a
+}
+
+#**->** Función TotalOutliers: recibe como input una columna que debería contener los outliers y devuelve la longitud del vector
+#de dicha columna.
+
+
+RemoveOutliers <- function(dataset,column) {
+  Q1 <- quantile(column, .25,na.rm = TRUE)
+  Q3 <- quantile(column, .75,na.rm = TRUE)
+  IQR <- IQR(column,na.rm = TRUE) #Or use IQR(data)
+  extreme.threshold.upper = (Q3 + 1.5*IQR)
+  extreme.threshold.lower = (Q1 - 1.5*IQR)
+  # we identify extreme outliers
+  
+  result <- subset(dataset, column> extreme.threshold.lower & column< extreme.threshold.upper)
+}
+
+
+#**->** La función de RemoveOutliers recibe dos input, un dataset y una columna de ese mismo dataset que queremos que evalúe en cuanto a valores #extremos para eliminarlos posteriormente.
+
+
+```
+
+Se va a crear un subset de variables numéricas para representar un primer boxplot con las transformaciones que tenemos.Para ello, la columna de id se fija como nombre de las filas y la variable objetivo de la causa se elimina.De este dataset se extraen las numéricas que se representarán.
+
+
+```{r subset1, echo=FALSE, warning=FALSE, message=FALSE}
+input<-as.data.frame(datos_galicia[,-(1)])
+row.names(input)<-datos_galicia$id
+```
+
+Dentro de input vamos a hacer un subset para las numéricas y otro para las categóricas porque la identificación es distinta:
+
+```{r subset2, echo=FALSE, warning=FALSE, message=FALSE}
+numericas_input <- input %>% select(is.numeric)
+no_numericas_input <- input %>% select(!is.numeric)
+
+```
+
+```{r subset02, echo=FALSE, warning=FALSE, message=FALSE,fig.align="center"}
+listaGraf_input <- dfplot_box(numericas_input) #Boxplots
+gridExtra::marrangeGrob(listaGraf_input, nrow = 4, ncol = 5)
+```
+
+En la mayoría de variables es evidente que hay valores extremos y a raíz del análisis gráfico, recibirán tratamientos distintos:
+
+Para cada una de las variables contenidas en el subset de numéricas input, vamos a identificar los valores extremos así
+como calcular su incidencia. Después crearemos el dataframe de incidencia a partir de este, que contendrá en una columna los nombres de las variables y en otra su incidencia.
+
+```{r porc_outliers, echo=FALSE, warning=FALSE, message=FALSE, results = "hide"}
+
+outliers_superficie = FindOutliers(datos_galicia$superficie)
+O_1 = InciOutliers(datos_galicia,outliers_superficie)
+
+outliers_lat = FindOutliers(datos_galicia$lat)
+O_2 = InciOutliers(datos_galicia,outliers_lat)
+
+outliers_lng = FindOutliers(datos_galicia$lng)
+O_3 = InciOutliers(datos_galicia,outliers_lng)
+
+outliers_time_ctrl = FindOutliers(datos_galicia$time_ctrl)
+O_4 = InciOutliers(datos_galicia,outliers_time_ctrl)
+
+outliers_time_ext = FindOutliers(datos_galicia$time_ext)
+O_5 = InciOutliers(datos_galicia,outliers_time_ext)
+
+outliers_personal = FindOutliers(datos_galicia$personal)
+O_6 = InciOutliers(datos_galicia,outliers_personal)
+
+outliers_medios = FindOutliers(datos_galicia$medios)
+O_7 = InciOutliers(datos_galicia,outliers_medios)
+
+outliers_perdidas = FindOutliers(datos_galicia$perdidas)
+O_8 = InciOutliers(datos_galicia,outliers_perdidas)
+
+
+outliers_ALTITUD = FindOutliers(datos_galicia$ALTITUD)
+O_9 = InciOutliers(datos_galicia,outliers_ALTITUD)
+
+outliers_TMEDIA = FindOutliers(datos_galicia$TMEDIA)
+O_10 = InciOutliers(datos_galicia,outliers_TMEDIA)
+
+outliers_TMIN = FindOutliers(datos_galicia$TMIN)
+O_11 = InciOutliers(datos_galicia,outliers_TMIN)
+
+outliers_TMAX = FindOutliers(datos_galicia$TMAX)
+O_12 = InciOutliers(datos_galicia,outliers_TMAX)
+
+outliers_VELMEDIA = FindOutliers(datos_galicia$VELMEDIA)
+O_13 = InciOutliers(datos_galicia,outliers_VELMEDIA)
+
+outliers_RACHA = FindOutliers(datos_galicia$RACHA)
+O_14 = InciOutliers(datos_galicia,outliers_RACHA)
+
+outliers_SOL = FindOutliers(datos_galicia$SOL)
+O_15 = InciOutliers(datos_galicia,outliers_SOL)
+
+outliers_PRES_RANGE = FindOutliers(datos_galicia$PRES_RANGE)
+O_16 = InciOutliers(datos_galicia,outliers_PRES_RANGE)
+
+
+variable <- c(names(numericas_input))
+incidencia <- c(O_1,O_2,O_3,O_4,O_5,O_6,O_7,O_8,O_9,O_10,O_11,O_12,O_13,O_14,O_15,O_16)
+
+length(incidencia)
+
+```
+```{r porc_outliers02, echo=FALSE, warning=FALSE, message=FALSE, results = "hide"}
+
+incidencia_inicial <- data.frame(variable,
+                           incidencia)
+incidencia_inicial
+
+# Una parte significativa de las variables requiere algún tratamiento para mitigar el efecto de los valores extremos.
+
+```
+
+En este dataset se realizará un tramiento parcial de los valores atípicos ya que algunos casos pueden llegar a ser considerados puntos de interés . Por ejemplo, en el caso de la superficie quemada,la presencia de valores anómalos es fuerte en esta variable, ya que un porcentaje significativo de las observaciones se corresponde con extensiones muy elevadas de terrenos quemado. La presencia de incendios con estas grandes dimensiones, aunque sea reducida en su conjunto es significativa, por eso no podemos omitirla en su totalidad. 
+
+#### 5.2 Tratamiento de los outliers
+
+En primer lugar se ha visto que en la variable de altitud el porcentaje de extremos es muy alto por lo que se va a categorizar para evitar tener que eliminar un 12,27 % de las observaciones. En este caso la transformación a variables categóricas va a ser una tramificación
+
+
+**10 . Tramificar altitud**
+
+```{r trans10, echo=FALSE, warning=FALSE, message=FALSE, results = "hide"}
+head(datos_galicia$ALTITUD)
+
+summary(datos_galicia$ALTITUD)
+datos_galicia[,"ALTITUD2"] <- cut(datos_galicia$ALTITUD,breaks = c(0,80,125,150),
+                                  labels = c("Inferior a 80","Entre 80-125","Superior a 125") ) 
+
+head(datos_galicia$ALTITUD)
+a = datos_galicia[,"ALTITUD2"]
+b = datos_galicia[,"ALTITUD"]
+s = as.data.frame(a)
+
+s[,"b"] = b
+
+head(s)
+
+#El dataframe que hemos bautizado con s para simplificar, es un dataset de comprobación para verificar que la tramificación ha sido #correcta.Comprobamos que esta transformación ha sido correcta. Tenemos varios ejemplos de estos dataset de comprobación s a lo largo del script.
+
+
+```
+
+```{r transALT1, warning=FALSE, message=FALSE,echo = FALSE, results="hide"}
+
+datos_galicia$ALTITUD2 = as.character(datos_galicia$ALTITUD2)
+
+datos_galicia$ALTITUD2 = datos_galicia$ALTITUD2 %>% replace_na("NO INFO")
+
+datos_galicia$ALTITUD = datos_galicia[,"ALTITUD2"]
+
+datos_galicia$ALTITUD = as.factor(datos_galicia$ALTITUD)
+
+datos_galicia[,"ALTITUD2"] = NULL
+
+table(datos_galicia$ALTITUD)
+
+```
+
+Después de realizar esta transformación tenemos que volver a cargar la parte correspondiente de las variables numéricas para conocer la incidencia de las variables restantes como numéricas.
+
+```{r transALT2, echo=FALSE, warning=FALSE, message=FALSE,results="hide"}
+
+incidencia_outliers <- data.frame(variable,
+                                  incidencia)
+incidencia_outliers
+
+
+# Respecto al dataframe anterior de incidencia, en este que se ha reescrito con el mismo nombre, ya no figura la variable de altitud por lo que es una variable menos a tratar.
+
+```
+```{r transALT22, echo=FALSE, warning=FALSE, message=FALSE,results="hide"}
+
+incidencia_outliers <- data.frame(variable,
+                                  incidencia)
+incidencia_outliers
+
+# Respecto al dataframe anterior de incidencia, en este que se ha reescrito con el mismo nombre, ya no figura la variable de altitud por lo que es una variable menos a tratar.
+
+```
+Se comienza con la eliminación de los valores extremos de las variables de medios, superficie, el tiempo transcurrido hasta entrar en fase de control del incendio ( time_ctrl) y el tiempo transcurrido hasta la extinción del incendio ( time_ext)
+
+
+```{r quita_outliers, echo=FALSE, warning=FALSE, message=FALSE}
+datos_galicia = RemoveOutliers(datos_galicia,datos_galicia$medios)
+
+datos_galicia = RemoveOutliers(datos_galicia,datos_galicia$superficie) 
+
+datos_galicia = RemoveOutliers(datos_galicia,datos_galicia$time_ctrl)
+
+datos_galicia = RemoveOutliers(datos_galicia,datos_galicia$time_ext) 
+
+```
+
+Una vez eliminados estos outliers, se realizará otra transformación de la variable de VELMEDIA, ya que el porcentaje de valores extremos (9.16%) sobre el total de las observaciones es significativo, por lo que se va a categorizar. 
+
+
+**11 Categorizar velocidad media**
+
+```{r trans11, echo=FALSE, warning=FALSE, message=FALSE,results="hide"}
+
+#Esta variable contiene información sobre la velocidad media del viento y se puede tramificar. También se genera el dataset de comprobación s ( #mecionado anteriormente) en el que se puede verificar si la tramificación ha sido correcta.
+
+datos_galicia[,"VELMEDIA2"] <- cut(datos_galicia$VELMEDIA,breaks = c(0,2, 4, 6,8,20),
+                                   labels = c("< 2 m/s","2-4 m/s","4-6 m/s","6-8 m/s","> 8 m/s") ) 
+
+a = datos_galicia[,"VELMEDIA2"]
+b = datos_galicia[,"VELMEDIA"]
+s = as.data.frame(a)
+
+s[,"b"] = b
+
+datos_galicia$VELMEDIA = datos_galicia[,"VELMEDIA2"]
+
+datos_galicia[,"VELMEDIA2"] = NULL
+
+
+input = as.data.frame(datos_galicia[,-(1)])
+row.names(input) = datos_galicia$id
+
+numericas_input <- input %>% select(is.numeric)
+
+names(numericas_input)
+
+variable <- c(names(numericas_input))
+incidencia <- c(O_1,O_2,O_3,O_4,O_5,O_6,O_7,O_8,O_10,O_11,O_12,O_14,O_15,O_16)
+
+
+incidencia_outliers <- data.frame(variable,
+                                  incidencia)
+
+incidencia_outliers
+
+```
+
+Se continúa con la eliminación de los valores extremos, en este caso para las variables de latitud y del rango entre la presión máxima y la presión mínima y la variable de personal.
+
+```{r quita_outliers3, echo=FALSE}
+datos_galicia = RemoveOutliers(datos_galicia,datos_galicia$personal) 
+
+```
+
+Se regenera el listado de incidencia en el que se puede observar que la presencia de valores extremos se ha reducido significativamente y solo queda una indicendia residual en algunas de las variables que se mantiene por si fueran puntos de interés.
+
+```{r regeneraOs, echo=FALSE, warning=FALSE, message=FALSE,results="hide"}
+
+outliers_superficie = FindOutliers(datos_galicia$superficie)
+O_1 = InciOutliers(datos_galicia,outliers_superficie)
+
+outliers_lat = FindOutliers(datos_galicia$lat)
+O_2 = InciOutliers(datos_galicia,outliers_lat)
+
+outliers_lng = FindOutliers(datos_galicia$lng)
+O_3 = InciOutliers(datos_galicia,outliers_lng)
+
+outliers_time_ctrl = FindOutliers(datos_galicia$time_ctrl)
+O_4 = InciOutliers(datos_galicia,outliers_time_ctrl)
+
+outliers_time_ext = FindOutliers(datos_galicia$time_ext)
+O_5 = InciOutliers(datos_galicia,outliers_time_ext)
+
+outliers_personal = FindOutliers(datos_galicia$personal)
+O_6 = InciOutliers(datos_galicia,outliers_personal)
+
+outliers_medios = FindOutliers(datos_galicia$medios)
+O_7 = InciOutliers(datos_galicia,outliers_medios)
+
+outliers_perdidas = FindOutliers(datos_galicia$perdidas)
+O_8 = InciOutliers(datos_galicia,outliers_perdidas)
+
+outliers_TMEDIA = FindOutliers(datos_galicia$TMEDIA)
+O_9 = InciOutliers(datos_galicia,outliers_TMEDIA)
+
+outliers_TMIN = FindOutliers(datos_galicia$TMIN)
+O_10 = InciOutliers(datos_galicia,outliers_TMIN)
+
+outliers_TMAX = FindOutliers(datos_galicia$TMAX)
+O_11 = InciOutliers(datos_galicia,outliers_TMAX)
+
+outliers_RACHA = FindOutliers(datos_galicia$RACHA)
+O_12 = InciOutliers(datos_galicia,outliers_RACHA)
+
+outliers_SOL = FindOutliers(datos_galicia$SOL)
+O_13 = InciOutliers(datos_galicia,outliers_SOL)
+
+outliers_PRES_RANGE = FindOutliers(datos_galicia$PRES_RANGE)
+O_14 = InciOutliers(datos_galicia,outliers_PRES_RANGE)
+
+
+input<-as.data.frame(datos_galicia[,-(1)])
+row.names(input)<-datos_galicia$id
+
+numericas_input <- input %>% select(is.numeric)
+
+
+```
+
+```{r regeneraOs2, echo=FALSE, warning=FALSE, message=FALSE,results = "hide"}
+
+
+variable <- c(names(numericas_input))
+incidencia <- c(O_1,O_2,O_3,O_4,O_5,O_6,O_7,O_8,O_9,O_10,O_11,O_12,O_13,O_14)
+
+
+incidencia_final <- data.frame(variable,
+                                  incidencia)
+
+incidencia_final
+
+```
+
+Se representa el boxplot para ver cómo ha quedado finalmente la distribución de los valores extremos:
+
+```{r boxplot4, echo=FALSE, warning=FALSE, message=FALSE,fig.height=9,fig.width=9}
+listaGraf_input <- dfplot_box(numericas_input) #Boxplots
+gridExtra::marrangeGrob(listaGraf_input, nrow = 4, ncol = 5)
+
+```
+
+No se van  a tratar los outliers en la variable de pérdidas porque a partir de la funcións de summary inicial se ha visto el elvado número elevado de observaciones perdidas y muy posiblemente sea eliminada esta variable.
+
+
+```{r quita_outliers4, echo=FALSE, warning=FALSE, message=FALSE,results="hide"}
+
+#Para las variables no numéricas, (algunas ya se han revisado al realizar las transformaciones)se verifica que no haya observaciones en 
+#categorías distintas a las posibles. Esta revisión se realizar extrayendo los niveles de los factores para ver si alguno falta o sobra. 
+
+no_numericas_input <- input %>% select(!is.numeric)
+factores_input <- no_numericas_input %>% select(!is.character)
+
+sapply(factores_input,levels)
+```
+
+### 6. ESTUDIO Y TRATAMIENTO DE VALORES PERDIDOS
+
+
+En esta sección se vela por que la eliminación de los valores sea efectiva, ya que no proporcionan información e impiden la correcta aplicación de los modelos al dataset. 
+
+```{r missings1, echo=FALSE,results="hide"}
+head(datos_galicia)
+```
+
+Ahora se identificarán los valores faltantes:
+
+#### 6.1 Localización
+
+Vamos a comprobar la cantidad de valores perdidos por cada una de las variables en valor absoluto y porcentual
+
+```{r missings2, echo=FALSE, warning=FALSE, message=FALSE,results = "hide"}
+total_perdidos = sapply(datos_galicia, function(datos_galicia) sum(is.na(datos_galicia))) # Cantidad de perdidos por variable
+porcentaje_perdidos = 100*sapply(datos_galicia, function(datos_galicia) mean(is.na(datos_galicia))) # % de perdidos por variable
+
+total_perdidos
+porcentaje_perdidos
+
+```
+
+En las variables de pérdidas, de velocidad media y de dirección del viento hay valores faltantes. Solo son 3 variables a tratar porque  el tratamiento de valores extremos ya ha eliminado muchas filas.
+
+Las posibilidades del tratamiento son las mismas que para los outliers: la eliminación de las filas o la imputación de estos valores por la media o la mediana. 
+
+* En el caso de la variable de pérdidas se eliminarán en vez de imputar ya que el rango es demasiado grande para imputar.
+
+*En el caso de las variables categóricas de dirección del viento y de velocidad media, de igual manera es muy arriesgado situar
+todas las observaciones perdidas en una de las categorías, porque distorsionaría el dataset.
+
+
+```{r missings3, echo=FALSE,results="hide"}
+summary(datos_galicia$perdidas)
+summary(datos_galicia$VELMEDIA)
+summary(datos_galicia$DIR_VIENTO)
+```
+
+Vamos a eliminar las observaciones en estas 3 variables que están afectadas y comprobaremos de nuevo la presencia de valores perdidos.
+
+Eliminamos la variable de pérdidas por el alto % de NAs
+
+```{r missings4, echo=FALSE,results="hide"}
+datos_galicia$perdidas = NULL
+
+datos_galicia = datos_galicia[is.finite(datos_galicia$DIR_VIENTO),]
+datos_galicia = datos_galicia[is.finite(datos_galicia$VELMEDIA),]
+
+
+total_perdidos = sapply(datos_galicia, function(datos_galicia) sum(is.na(datos_galicia))) # Cantidad de perdidos por variable
+total_perdidos
+
+dim(datos_galicia)
+```
+
+```{r missings40, echo=FALSE}
+
+dim(datos_galicia)
+```
+
+El dataset tratado cuenta con X líneas
+
+```{r exportamos}
+write.csv(datos_galicia, file = "datos_galicia_limpio.csv")
+```
+
+
+
+
+
+MODELADO
+
+( meter link al github al notebook)
+
+Después de la preparación de datos, tenemos que desarrollar el modelado.
+
+Un modelo tiene como objetivo predecir una variable objetivo a partir de un conjunto de variables explicativas y lo vamos a desarrollar mediante técnicas de Machine Learning siguiendo los siguientes pasos:
+
+1.	EDA
+2.	División de nuestro dataset
+3.	Modelos
+4.	Mejora de modelos
+5.	Selección del modelo
+
+Para esta parte del trabajo, vamos a utilizar lenguaje Python a través de Júpiter Notebook.
+
+1.	EDA - Análisis exploratorio de datos
+
+Partimos de nuestra base de datos limpia de R. Un dataset con un total de 12976 líneas y 29 columnas
+
+
+METER TABLA
+
+
+Las columnas son variables que debemos saber qué tipo de datos tienen y cómo se distribuyen; esto lo haremos viendo el tipo de datos, su histograma y el número de observaciones únicas de cada variable.
+
+
+METER 4 TABLAS
+
+
+
+A simple vista, lo que vemos, es que las variables Unnamed e id tienen tantos valores únicos como observaciones contienen, por lo que decidimos eliminar ambas variables.
+
+Por otro lado, las variables se dividen entre variables numéricas y variables categóricas. En Python no podemos trabajar con variables categóricas, por lo que tendremos que hacer un tratamiento especial con ellas y por ello, vamos a dividir el dataset en dos:
+
+
+
+En primer lugar, eliminaremos aquellas que tengan demasiadas categorías, como Idmunicipio y fecha, que tienen un total de 268 y 2272 valores únicos respectivamente. Al tener tantas categorías y estar representada de una manera menos fraccionada en idprovincia para el caso de idmunicipio y Mes, Trimestre y Año para fecha, decidimos prescindir de ellas.
+
+Las formas más comunes de tratar este tipo de variables suelen ser transformarlas a variables ordinales o realizar la codificación One-Hot.
+Transformarlas en orden numérico en ocasiones dificulta la predicción ya que da diferentes pesos a las distintas categorías de una variable, por ello, esta transformación la vamos a utilizar para aquellas variables que sí sigan un orden en sus categorías; sin embargo, para aquellas que no sigan un orden, utilizaremos la codificación One-Hot. Este método consiste en crear una nueva variable binaria por cada categoría existente en la variable inicial, donde 1 serán las observaciones que pertenezcan a esa categoría y 0 las demás.
+
+Para saber qué variable será transformada con cada método, vemos qué categorías son las que componen nuestras variables.
+
+
+METER 8 TABLITAS
+
+•	variables con codificación One-Hot:  idprovincia, Trimestre, Mes, DIR_VIENTO
+•	variables orden numérico: gastos, ALTITUD, VELMEDIA
+
+Tras realizar estas transformaciones y previa comprobación de que no se han traspasado los datos con ningún valor faltante, nuestro dataset tiene un total de 12976 líneas y 45 columnas y está listo para comenzar con el modelo.
+
+2.	DIVISIÓN DE NUESTRO DATASET
+
+En primer lugar, antes de empezar a generar nuestros modelos, debemos definir nuestra variable objetivo, que será causa. El resto de variables serán nuestras variables explicativas.
+
+Recordemos cómo se distribuye nuestra variable, ya que lo deberemos tener en cuenta a la hora de seleccionar el tipo de modelo que queremos realizar.
+
+
+
+La variable causa se compone de cinco categorías, las cuales están desbalanceadas y debere-  mos tenerlo en cuenta.
+
+En segundo lugar, tenemos que dividir de manera aleatoria nuestro dataset en dos, una parte que usaremos para entrenar nuestro modelo que corresponderá con el 80% a la que llamaremos Train y otra para evaluarlo, con el 20% restante que será Test. En esta parte es en la primera en la que deberemos tener en cuenta el desbalanceo de nuestra variable objetivo, distribuyendo de manera proporcional las categorías.
+
+
+
+METER TABLA
+
+
+
+
+Una vez realizados estos dos pasos, ya podemos comenzar a generar nuestros modelos.
+
+3.	MODELOS
+
+Para los modelos vamos a utilizar métodos Backward (Eliminación hacia atrás), partimos de modelos iniciales muy complejos que incluyen todas las variables y después, vamos reduciéndolas. 
+
+Al querer predecir una variable multicategoría, utilizaremos los modelos que consideramos pueden ser más idóneos para ella.
+
+•	Support Vector Machines = SVM : Consiste en un conjunto de métodos de aprendizaje supervisados que realiza un método one-against-one . Utiliza una técnica de iguala los dintintos tipos de categorías, por lo tanto, es una buena opción para predecir una variable categórica desbalanceada.
+
+•	Árbol de decisión: Combinación y subdivisión en ramas de las variables de una forma binaria para la toma de la decisión con mayor probabilidad de que ocurra un suceso
+
+•	Random Forest: Conjunto de árboles de decisión
+
+•	Gradient Boosting: Está formado por un conjunto de árboles de decisión individuales, entrenados de forma secuencial, de forma que cada nuevo árbol trata de mejorar los errores de los árboles anteriores. La diferencia con Random Forest es que utiliza árboles más débiles, con menos profundidad.
+
+Estos modelos no serán normalizados ya que hemos comprobado que no afecta al resultado final. 
+
+Las métricas de rendimiento que vamos a utilizar es el Acurracy, utilizando una escala del 0 al  1, en la que 0 indica una capacidad nula de predicción y 1 que el modelo tendría la capacidad de predecir correctamente el 100% de las causas de los incendios.
+
+Los resultados de los modelos más complejos con todas nuestras variables iniciales, son los siguientes:
+
+
+MODELO 1 :Score modelo SVM : 0.8701848998459168 con todas las variables: 44
+MODELO 2 : Score modelo Árbol de decisión : 0.7619414483821263 con todas las variables: 44
+MODELO 3 : Score modelo Random Forest : 0.8701848998459168 con todas las variables: 44
+MODELO 4 : Score modelo Gradient Boosting : 0.8701848998459168 con todas las variables : 44 
+
+
+
+Para empezar, tenemos unos resultados muy buenos, parece que los modelos se ajustan muy bien; ahora, nuestro siguiente paso, es reducir las variables para poder conseguir un modelo más sencillo y un mejor rendimiento.
+
+Al ser el Árbol de decisión el modelo que peores resultados nos da en una primera valoración vamos a prescindir de él.
+
+4.	MEJORA DE MODELOS
+
+Para mejorar nuestro modelo vamos a realizar los siguientes ajustes: 
+
+•	Selección de Parámetros
+•	Selección de variables
+
+4.1 SELECCIÓN DE PARÁMETROS
+
+Para ello, hemos utilizado Gridsearch,una técnica que selecciona los parámetros que debemos utilizar para sacar un mayor rendimiento a nuestro modelo indicándole el modelo que queremos utilizar y los parámetros a probar.
+
+4.2 SELECCIÓN DE VARIABLES
+
+Iremos reduciendo variables a nuestro dataset a través de tres métodos de filtro:
+4.2.1.Teniendo en cuenta la correlación entre variables predictoras y la correlación de esas variables con la variable objetivo
+
+Mostramos la correlación entre las variables que superen el 50% de correlación entre ellas y las variables que tengan una correlación superior al 5% con la variable objetivo.
+
+METER 2 TABLAS
+
+
+Eliminamos en primer lugar las variables más correlacionadas entre si (TMAX,TMIN y time_ext)  una vez eliminadas, nos quedamos con las variables que estén por encima del 5% de correlación con la variable  objetivo.
+
+Los modelos con esta selección de variables dan los siguientes resultados:
+
+
+MODELO 5 : Score modelo SVM reducido teniendo en cuenta correlaciones : 0.8701848998459168 con 13 variables
+MODELO 6 :Score modelo Random Forest reducido teniendo en cuenta correlaciones : 0.8713405238828967 con 13 variables
+MODELO 7 : Score modelo Gradient Boosting reducido teniendo en cuenta correlaciones : 0.8701848998459168 con 13 variables
+
+
+
+4.2.2. Mejores variables por el método de chi-cuadrado: Evalúa la probabilidad de correlación entre las variables.
+
+
+Este método selecciona las siguientes variables :  ['superficie', 'lat','lng','muertos','heridos','time_ctrl','time_ext','personal','medios', 'PRECIPITACION']
+
+Los resultados de los modelos serían los siguientes:
+
+
+MODELO 8 : Score modelo SMV por Chi-cuadrado : 0.8701848998459168 con 10 variableS
+MODELO 9: Score modelo SMV por Chi-cuadrado : 0.8713405238828967 con 10 variables
+MODELO 10 : Score modelo Gradient Boosting por Chi-cuadrado : 0.8701848998459168 con 10 variables
+
+
+4.2.3. Selección de las mejores variables a través la importancia de las variables predictoras
+Este método solo se ha realizado con Random Forest y Gradient Boosting ,ya que el modelo SVM no lo permite.
+Las variables seleccionadas y los resultados para cada uno de ellos serían los siguientes:
+
+['lat', 'lng', 'personal', 'medios', 'TMAX', 'Año']
+
+MODELO 11 : Score modelo Gradient Boosting respecto a las variables con mayor importancia : 0.8701848998459168 con 7 variables
+
+
+['superficie', 'lat', 'lng', 'time_ctrl', 'personal', 'medios', 'TMEDIA','RACHA', 'SOL', 'Año', 'PRES_RANGE']
+
+
+MODELO 12 : Score modelo Random Forest respecto a las variables con mayor importancia : 0.8713405238828967 con 12 variables
+
+1.	SELECCIÓN DEL MODELO
+
+Cuando realizamos las predicciones en Train, podemos contrastarlas con los datos reales en Test. Si los valores son cercanos, quiere decir que nuestro modelo lo podemos dar por bueno y para evaluarlo utilizaremos la validación cruzada.
+
+La validación cruzada selecciona distintos cortes (en este caso hemos seleccionado 5) para realizar el entrenamiento y la validación del modelo comprobando que los resultados obtenidos son iguales independientes a la muestra.
+
+Tras realizar la validación cruzada a los modelos que consideramos más óptimos, vamos a representar este método mediante boxplot para los tres modelos que hemos ido utilizando.
+
+METER FOTO BOXPLOT
+
+Los tres modelos tienen una capacidad predictiva por encima del 85% y varianzas muy bajas, lo que demuestra que sus predicciones no son aleatorias. El grafico junto a los resultados de la validación cruzada de los modelos concretos nos lleva a seleccionar el modelo que consideramos que llega a obtener los mejores resultados, así como su sencillez. Por tanto, el modelo seleccionado es Random Forest con la selección de variables del MODELO 12, cuyos resultados de la validación cruzada son los siguientes:
+ 
+Además, podemos ver también la matriz de confusión de nuestro modelo, así como las variables que lo componen y su importancia.
+
+METER 2 TABLAS
+
+En la matriz de confusión vemos que en la primera clase de la variable predice prácticamente el 100% de los valores, sin embargo, en el resto de categorías sucede todo lo contrario, lo cual seguramente sea causado por el excesivo desbalanceo con el que contábamos. Vamos a comprobarlo mediante un reporte de clasificaciones donde nos indica los resultados de las predicciones de manera desglosada:
+
+
+METER TABLITAS
+
+
+Efectivamente, las predicciones de la 3º,4º y 5º clase son  muy bajas.
+
+Tanto la matriz de confusión como los resultados de nuestras clases indican que el desbalanceo afecta a los resultados, ya que el Accuracy se consigue debido a que la mayoría de la precisión viene dada por nuestra clase mayoritaria y por lo tanto, en este caso , quizás no sea la mejor manera de medir nuestro modelo; para poder realizar una predicción más precisa realizamos un método por el cual se generan observaciones adicionales en las clasificaciones minoritarias, con ello, nuestros resultados serían:
+
+
+METER TABLA Y MATRIZ DE CONFUSIÓN
+
+
+
+Se reduce la precisión de la primera categoría, pero mejora la precisión del resto.
+
+
+*Futuras mejoras: realizar un modelo dicotómico, separando la variable únicamente entre incendios intencionados y no intencionados. Visión de negocio: aseguradoras.
+
+
+
+
+
+
+
+
+
+
+
+![alt image](https://i.pinimg.com/originals/1b/bc/77/1bbc777d39f199dec51dcb9374c9538b.jpg)
+
+
+
+
+![alt image](https://1.bp.blogspot.com/-GftGN4RGcZs/YS9E_B6KCnI/AAAAAAAAEaU/LNCMoI_H1Rkcerm9gdP1WWO6lf3re4DPQCLcBGAsYHQ/s1500/mujer-camino-decisi%25C3%25B3n-elegir-elecci%25C3%25B3n.jpg)
+
+
+
+
+
+
